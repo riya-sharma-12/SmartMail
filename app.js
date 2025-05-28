@@ -11,7 +11,7 @@ app.use(express.json());
 app.use('/api/emails', emailRoutes);
 
 app.listen(3000, () => {
-  console.log('Server running on http://localhost:3000');
+  console.log('Server running on http://localhost:3000 --');
 
   // Step 1: Start email fetching
   // emailController();
