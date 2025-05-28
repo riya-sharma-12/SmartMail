@@ -11,19 +11,6 @@ const { generateReply } = require('./ollamaReply');
 async function processReplies(batchSize = 5) {
   const todayStart = startOfDay(new Date());
   const todayEnd = endOfDay(new Date());
-
-  // Step 1: Get today's emails that don’t already have a reply
-  // const emails = await Email.findAll({
-  //   where: {
-  //     received_at: {
-  //       [Op.between]: [todayStart, todayEnd],
-  //     },
-  //     resp_id: {
-  //       [Op.notIn]: db.literal(`(SELECT resp_id FROM replies)`),
-  //     },
-  //   },
-  // });
-
   let emails = await Email.findAll({
   where: {
     received_at: {
