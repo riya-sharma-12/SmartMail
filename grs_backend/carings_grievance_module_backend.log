@@ -1,0 +1,6 @@
+{"level":"error","message":"Invalid database connection...! causing error SequelizeConnectionError: database \"carings_amgs\" does not exist","timestamp":"2024-05-19T09:49:54.113Z"}
+{"level":"error","message":"Invalid database connection...! causing error SequelizeConnectionError: database \"carings_amgs\" does not exist","timestamp":"2024-05-20T07:00:48.796Z"}
+{"level":"error","message":"Invalid database connection...! causing error SequelizeConnectionError: database \"carings_amgs\" does not exist","timestamp":"2024-05-20T07:02:08.397Z"}
+{"level":"info","message":"Server connected to --> 3002 Port","timestamp":"2024-05-20T07:03:09.659Z"}
+{"level":"info","message":"Server connected to --> 3002 Port","timestamp":"2024-05-20T08:49:51.202Z"}
+{"level":"info","message":"Server connected to --> 3002 Port","timestamp":"2024-05-24T04:23:48.877Z"}
