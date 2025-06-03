@@ -5,7 +5,7 @@ const CaraDept = require('../masters/tbl_cara_internal_departments');
 const GrievanceEntry = sequelize().define(
     'tbl_grievance_details_global',
     {
-        grievance_token: {
+        email_token: {
             type: DataTypes.INTEGER,
             primaryKey: true,
         },

@@ -10,7 +10,7 @@ const getAllComplainsQuery = async (req, res) => {
             where: {
                 grievance_type: grievance_type
             },
-            attributes: ['grievance_token', 'applicant_name', 'applicant_phone_no', 'grievance_status', 'grievance_entry_date'],
+            attributes: ['email_token', 'applicant_name', 'applicant_phone_no', 'grievance_status', 'grievance_entry_date'],
         });
         if (!grievances) { return res.status(404).send({ status: env.s404, msg: "Grievance Details Not Found!" }); };
         return res.status(200).send({ status: env.s200, msg: "Grievance Details Fetched Successfully.", data: { grievances: grievances } });
@@ -25,11 +25,11 @@ const getGrievanceDetailViaTokenNo = async (token, grievance_type) => {
         const grievances = await grievanceEntryModel.findAll({
             where: {
                 grievance_type: grievance_type,
-                grievance_token: {
+                email_token: {
                     [Op.like]: `${token}%`
                 }
             },
-            attributes: ['grievance_token', 'applicant_name', 'applicant_phone_no', 'grievance_status', 'grievance_entry_date'],
+            attributes: ['email_token', 'applicant_name', 'applicant_phone_no', 'grievance_status', 'grievance_entry_date'],
         });
         return grievances;
     } catch (error) {
@@ -46,7 +46,7 @@ const getGrievanceDetailViaName = async (name, grievance_type) => {
                     [Op.like]: `%${name}%`
                 }
             },
-            attributes: ['grievance_token', 'applicant_name', 'applicant_phone_no', 'grievance_status', 'grievance_entry_date'],
+            attributes: ['email_token', 'applicant_name', 'applicant_phone_no', 'grievance_status', 'grievance_entry_date'],
         });
         return grievances;
     } catch (error) {
@@ -63,7 +63,7 @@ const getGrievanceDetailViaPhoneNo = async (phoneno, grievance_type) => {
                     [Op.like]: `${phoneno}%`
                 }
             },
-            attributes: ['grievance_token', 'applicant_name', 'applicant_phone_no', 'grievance_status', 'grievance_entry_date'],
+            attributes: ['email_token', 'applicant_name', 'applicant_phone_no', 'grievance_status', 'grievance_entry_date'],
         }
         );
         return grievances;
@@ -81,7 +81,7 @@ const getGrievanceDetailViaEmailId = async (emailId, grievance_type) => {
                     [Op.like]: `${emailId}%`
                 }
             },
-            attributes: ['grievance_token', 'applicant_name', 'applicant_phone_no', 'grievance_status', 'grievance_entry_date'],
+            attributes: ['email_token', 'applicant_name', 'applicant_phone_no', 'grievance_status', 'grievance_entry_date'],
         });
         return grievances;
     } catch (error) {
@@ -122,19 +122,19 @@ const searchGrievance = async (req, res) => {
 
 const getGrievanceDetails = async (req, res) => {
     try {
-        const { grievance_token } = req.body;
-        if (!grievance_token) { return res.status(404).send({ status: env.s404, msg: "Grievance Token Not Found!" }); };
-        const grievancerDetail = await grievanceModel.findByPk(grievance_token);
+        const { email_token} = req.body;
+        if (!email_token) { return res.status(404).send({ status: env.s404, msg: "Grievance Token Not Found!" }); };
+        const grievancerDetail = await grievanceModel.findByPk(email_token);
         if (!grievancerDetail) { return res.status(404).send({ status: env.s404, msg: "Grievance Not Found!" }); };
         const grievanceRespDetail = await grievancesModel.findAll({
             attributes: [
-                ['tbl_grievances.grievance_token', 'grievance_token'],
+                ['tbl_grievances.email_token', 'email_token'],
                 ['tbl_grievances.grievance_sub_token_no', 'grievance_sub_token_no'],
-                ['tbl_grievances.grievance', 'grievance_token'],
+                ['tbl_grievances.grievance', 'email_token'],
                 ['tbl_grievances.grievance_uploaded_doc_path', 'grievance_sub_token_no'],
                 ['tbl_grievances.grievance_date', 'grievance_sub_token_no'],
             ],
-            where: { grievance_token: grievance_token },
+            where: { email_token: email_token},
             include: [
                 {
                     model: grievanceResponseModel,
@@ -147,10 +147,10 @@ const getGrievanceDetails = async (req, res) => {
                         ['tbl_grievance_responses.response_date', 'grievance_response_date'],
                     ],
                     on: {
-                        grievance_token: Sequelize.where(
-                            Sequelize.col('tbl_grievances.grievance_token'),
+                        email_token: Sequelize.where(
+                            Sequelize.col('tbl_grievances.email_token'),
                             '=',
-                            Sequelize.col('tbl_grievance_responses.grievance_token')
+                            Sequelize.col('tbl_grievance_responses.email_token')
                         ),
                         grievance_sub_token_no: Sequelize.where(
                             Sequelize.col('tbl_grievances.grievance_sub_token_no'),

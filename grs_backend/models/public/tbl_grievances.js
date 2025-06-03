@@ -4,13 +4,13 @@ const sequelize = require('../../config/db_connection');
 const Grievances = sequelize().define(
     'tbl_grievances',
     {
-        grievance_token: {
+        email_token: {
             type: DataTypes.STRING,
             primaryKey: true,
             allowNull: false,
             references: {
                 model: 'public.tbl_grievance_details_global',
-                key: 'grievance_token',
+                key: 'email_token',
             },
         },
         grievance_sub_token_no: {

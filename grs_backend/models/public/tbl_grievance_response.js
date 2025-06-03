@@ -5,13 +5,13 @@ const GrievanceModel = require('./tbl_grievance');
 const GrievanceResponse = sequelize().define(
     'tbl_grievance_response',
     {
-        grievance_token: {
+        email_token: {
             type: DataTypes.STRING,
             primaryKey: true,
             allowNull: false,
             references: {
                 model: GrievanceModel,
-                key: 'grievance_token',
+                key: 'email_token',
             },
         },
         grievance_sub_token_no: {
@@ -80,8 +80,8 @@ const GrievanceResponse = sequelize().define(
 );
 
 // GrievanceResponse.belongsTo(GrievanceModel, {
-//     foreignKey: 'grievance_token',
-//     targetKey: 'grievance_token',
+//     foreignKey: 'email_token',
+//     targetKey: 'email_token',
 // });
 
 

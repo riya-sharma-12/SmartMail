@@ -25,27 +25,27 @@ router.get('/getAllUnResolvedGrievances', grievanceMainController.getAllUnResolv
 router.get('/getAllClosedGrievances', grievanceMainController.getAllClosedGrievances);
 router.post('/updateGrievanceStatusToResolved',
     [
-        ...checkNotNull(['grievance_token']),
-        //check('grievance_token').exists().isNumeric().withMessage('Invalid Department Id.'),
+        ...checkNotNull(['email_token']),
+        //check('email_token').exists().isNumeric().withMessage('Invalid Department Id.'),
     ], validateBody, grievanceMainController.updateGrievanceStatusToResolved
 );
 router.post('/sendGrievanceReply',
     [
-        ...checkNotNull(['grievance_token', 'reply_body']),
-        //check('grievance_token').exists().isNumeric().withMessage('Invalid Department Id.'),
+        ...checkNotNull(['email_token', 'reply_body']),
+        //check('email_token').exists().isNumeric().withMessage('Invalid Department Id.'),
     ], validateBody, grievanceMainController.sendGrievanceReply
 );
 
 router.post('/grievanceReplyLog',
     [
-        ...checkNotNull(['grievance_token']),
-        check('grievance_token').exists().isNumeric().withMessage('Invalid Grievance Token No.'),
+        ...checkNotNull(['email_token']),
+        check('email_token').exists().isNumeric().withMessage('Invalid email keyword.'),
     ], validateBody, grievanceMainController.grievanceReplyLog
 );
 
 router.post('/pushBackGrievanceFromConsultantLevel',
     [
-        ...checkNotNull(['grievance_token']),
+        ...checkNotNull(['email_token']),
     ], validateBody, grievanceMainController.pushBackGrievanceFromConsultantLevel
 );
 

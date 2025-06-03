@@ -82,10 +82,10 @@ const getAllGrievances = async (req, res) => {
 
 const getGrievanceData = async (req, res) => {
     try {
-        const { grievance_token } = req.body;
+        const { email_token} = req.body;
         const getGrievanceData = await grievanceEntryModel.findOne({
             where: {
-                grievance_token: grievance_token
+                email_token: email_token
             }
         });
         return res.status(200).send({ status: env.s200, msg: "All Grievances Successfully", getGrievanceData: getGrievanceData });
@@ -99,10 +99,10 @@ const getGrievanceData = async (req, res) => {
 
 const updateGrievanceData = async (req, res) => {
     try {
-        const { grievance_token, applicant_state_code, grievance_category, grievance_type } = req.body;
+        const { email_token, applicant_state_code, grievance_category, grievance_type } = req.body;
         const getGrievanceData = await grievanceEntryModel.findOne({
             where: {
-                grievance_token: grievance_token
+                email_token: email_token
             }
         });
         getGrievanceData.applicant_state_code = applicant_state_code;
@@ -138,7 +138,7 @@ const getAllGrievancesforDepts = async (req, res) => {
         //console.log(dept_type, "dept_type");
         if (dept_type === 0) {
             allGrievances = await grievanceEntryModel.findAll({
-                attributes: ["grievance_token", "applicant_name", "applicant_phone_no", "grievance_entry_date", "grievance_against_code", "cara_dept"],
+                attributes: ["email_token", "applicant_name", "applicant_phone_no", "grievance_entry_date", "grievance_against_code", "cara_dept"],
                 where: {
                     [Op.or]: [
                         {
@@ -161,7 +161,7 @@ const getAllGrievancesforDepts = async (req, res) => {
 
         } else {
             allGrievances = await grievanceEntryModel.findAll({
-                attributes: ["grievance_token", "applicant_name", "applicant_phone_no", "grievance_entry_date", "grievance_against_code", "cara_dept"],
+                attributes: ["email_token", "applicant_name", "applicant_phone_no", "grievance_entry_date", "grievance_against_code", "cara_dept"],
                 where: {
                     [Op.or]: [
                         {

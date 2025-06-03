@@ -9,11 +9,11 @@ const { getTokenNumber } = require('../../utils/generateGrievanceToken');
 
 const changeGrievanceCategory = async (req, res) => {
     try {
-        const { grievance_token, curr_category } = req.body;
-        const grievanceDetail = await grievanceEntryModel.findByPk(grievance_token);
+        const { email_token, curr_category } = req.body;
+        const grievanceDetail = await grievanceEntryModel.findByPk(email_token);
         if (!grievanceDetail) { return res.status(404).send({ status: env.s404, msg: "Grievance Not Found!" }); };
         const grievanceStatus = grievanceDetail.status;
-        if (grievanceStatus == 2) { return res.status(422).send({ status: env.s422, msg: `Grievance -- ${grievance_token} Ticked is Already Closed, It can't modified futher.` }); };
+        if (grievanceStatus == 2) { return res.status(422).send({ status: env.s422, msg: `Grievance -- ${email_token} Ticked is Already Closed, It can't modified futher.` }); };
         grievanceDetail.grievance_category = parseInt(curr_category);
         grievanceDetail.save();
         return res.status(200).send({ status: env.s200, msg: "Grievance Category Changed Successfully" });
@@ -26,13 +26,13 @@ const changeGrievanceCategory = async (req, res) => {
 const moveComplainBetweenCaraDepts = async (req, res) => {
     try {
         const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-        const { grievance_token, move_from_dept_id, move_to_dept_id, mover_id } = req.body;
-        const grievanceDetail = await grievanceEntryModel.findByPk(grievance_token);
+        const { email_token, move_from_dept_id, move_to_dept_id, mover_id } = req.body;
+        const grievanceDetail = await grievanceEntryModel.findByPk(email_token);
         if (!grievanceDetail) { return res.status(404).send({ status: env.s404, msg: "Grievance Not Found!" }); };
         const grievanceStatus = grievanceDetail.status;
-        if (grievanceStatus == 2) { return res.status(422).send({ status: env.s422, msg: `Grievance -- ${grievance_token} Ticked is Already Closed, It can't modified futher.` }); };
+        if (grievanceStatus == 2) { return res.status(422).send({ status: env.s422, msg: `Grievance -- ${email_token} Ticked is Already Closed, It can't modified futher.` }); };
         const grievanceMovedEntry = {
-            'grievance_token': grievance_token,
+            'email_token': email_token,
             'move_from_dept_id': move_from_dept_id,
             'move_to_dept_id': move_to_dept_id,
             'mover_id': mover_id,

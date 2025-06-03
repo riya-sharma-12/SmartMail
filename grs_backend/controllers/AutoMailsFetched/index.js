@@ -14,11 +14,11 @@ const { grievanceEntryModel } = require("../../models/index"); //Models
 async function createGrievanceEntry(req) {
     try {
         const fetchedMailData = req;
-        const grievance_token = await getTokenNumber();
+        const email_token= await getTokenNumber();
 
         // Create a new row in the table using Sequelize's create method
         const newGrievanceEntry = await grievanceEntryModel.create({
-            grievance_token: grievance_token,
+            email_token: email_token,
             grievance_category: 1,
             grievance_type: 1,
             applicant_email_id: fetchedMailData.senderEmail,

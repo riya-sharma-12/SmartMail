@@ -1,5 +1,5 @@
 // services/replyProcessor.js
-const { Op } = require('sequelize');
+const { Op, where } = require('sequelize');
 const { v4: uuidv4 } = require('uuid');
 const { Sequelize } = require('sequelize');
 const sequelize = require('../config/db');
@@ -59,7 +59,10 @@ Draft reply:
       // console.log(prompt);
       const replyText = llm.split('<END_REPLY>')[0].trim();
       const reply_id = uuidv4();
-
+      const checkResp = await Reply.find(where:{resp_id:email.resp_id});
+      if(checkResp){
+        return
+      }
       await Reply.create({
   llm_reply: replyText,
   final_reply: replyText,

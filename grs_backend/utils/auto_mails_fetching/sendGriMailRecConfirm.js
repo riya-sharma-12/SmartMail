@@ -43,7 +43,7 @@ const sendConfirmationMail = async (to, caseLink) => {
 
 }
 
-const sendGrievanceReplyMail = async (to, cc_ids, subject, grievance_token, mail_body, mail_message_id) => {
+const sendGrievanceReplyMail = async (to, cc_ids, subject, email_token, mail_body, mail_message_id) => {
     let refID = '';
     if (mail_message_id) { refID = mail_message_id }
     const mailOptions = {

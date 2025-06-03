@@ -8,16 +8,16 @@ const { grievanceSubjectsModel, grievanceModel, grievanceStakeholdersModel, grie
 
 const grievanceDetailedReport = async (req, res) => {
     try {
-        const { grievance_token, user_type } = req.body;
-        if (!grievance_token || !user_type) { return res.status(404).send({ status: env.s404, msg: "Grievance Token Or User Type Not Found!" }); };
-        const grievance = await grievanceModel.findByPk(grievance_token);
+        const { email_token, user_type } = req.body;
+        if (!email_token|| !user_type) { return res.status(404).send({ status: env.s404, msg: "Grievance Token Or User Type Not Found!" }); };
+        const grievance = await grievanceModel.findByPk(email_token);
         if (!grievance) { return res.status(404).send({ status: env.s404, msg: "Grievance Not Found!" }); };
-        const grievance_resp = await grievanceResponseModel.findAll({ where: { grievance_token: grievance_token } });
+        const grievance_resp = await grievanceResponseModel.findAll({ where: { email_token: email_token} });
         let grievanceInternalRemark = null;
         if (parseInt(user_type) < 4) {
             grievanceInternalRemark = await grievanceInternalRemarkModel.findAll({
                 where: {
-                    grievance_token: grievance_token
+                    email_token: email_token
                 }
             });
         }

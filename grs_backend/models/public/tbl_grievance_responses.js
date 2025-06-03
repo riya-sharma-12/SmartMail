@@ -9,12 +9,12 @@ const GrievanceResponses = sequelize().define(
             primaryKey: true,
             autoIncrement: true,
         },
-        grievance_token: {
+        email_token: {
             type: DataTypes.STRING,
             allowNull: false,
             references: {
                 model: 'public.tbl_grievance_details_global',
-                key: 'grievance_token',
+                key: 'email_token',
             },
         },
         grievance_sub_token_no: {
@@ -60,9 +60,9 @@ const GrievanceResponses = sequelize().define(
 // GrievanceResponses.belongsTo(GrievanceModel, {
 //     foreignKey: {
 //         name: 'fk_grievance_sub_token_no',
-//         field: ['grievance_token', 'grievance_sub_token_no'],
+//         field: ['email_token', 'grievance_sub_token_no'],
 //     },
-//     targetKey: ['grievance_token', 'grievance_sub_token_no'],
+//     targetKey: ['email_token', 'grievance_sub_token_no'],
 // });
 
 

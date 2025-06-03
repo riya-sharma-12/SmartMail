@@ -87,9 +87,9 @@ const registerNewGrievance = async (req, res) => {
         const { grievance_type, grievance_subject_id, grievance_dept_code, applicant_gender,
             applicant_district_code, applicant_state_code, grievance_category, grievance_mail_subject,
             applicant_email_id, grievance_mail_body, applicant_regno, applicant_name, internal_remark, grievance_from } = req.body;
-        const grievance_token = await getTokenNumber();
+        const email_token= await getTokenNumber();
         const user_creater_id = req.user.user_id;
-        //console.log("grievance_token", grievance_token);
+        //console.log("email_token", email_token);
         let state_code = null;
         let dist_code = null;
         let grievanceFrom = null;
@@ -103,7 +103,7 @@ const registerNewGrievance = async (req, res) => {
             grievance_subject_id: grievance_subject_id,
             grievance_dept_code: deptCode,
             grievance_entry_date: new Date(),
-            grievance_token: grievance_token,
+            email_token: email_token,
             applicant_gender: applicant_gender,
             applicant_district_code: dist_code,
             applicant_state_code: state_code,
@@ -218,16 +218,16 @@ const getAllDistGrievances = async (req, res) => {
 // move cara-grievance
 const moveGrievanceBetweenCaraDepts = async (req, res) => {
     try {
-        const { grievance_token, dept_move_to } = req.body;
-        const grievanceDetail = await grievanceEntryModel.findByPk(grievance_token);
+        const { email_token, dept_move_to } = req.body;
+        const grievanceDetail = await grievanceEntryModel.findByPk(email_token);
         if (!grievanceDetail) { return res.status(404).send({ status: env.s404, msg: "Grievance Not Found!" }); };
         const grievanceStatus = grievanceDetail.status;
-        if (grievanceStatus == 2) { return res.status(422).send({ status: env.s422, msg: `Grievance -- ${grievance_token} Ticked is Already Closed, It can't modified futher.` }); };
+        if (grievanceStatus == 2) { return res.status(422).send({ status: env.s422, msg: `Grievance -- ${email_token} Ticked is Already Closed, It can't modified futher.` }); };
         const mover_id = req.user.user_id;
         const dept_move_from = req.user.user_dept || 0;
         const ipAddress = req.userIp;
         const grievanceMovedEntry = {
-            'grievance_token': grievance_token,
+            'email_token': email_token,
             'dept_move_from': dept_move_from,
             'dept_move_to': dept_move_to,
             'mover_id': mover_id,

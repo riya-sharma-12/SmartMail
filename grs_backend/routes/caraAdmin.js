@@ -34,7 +34,7 @@ router.post('/registerNewGrievance',
 
 router.post('/moveGrievanceBetweenCaraDepts',
     [
-        ...checkNotNull(['grievance_token', 'dept_move_to']),
+        ...checkNotNull(['email_token', 'dept_move_to']),
         check('dept_move_to').exists().isNumeric().withMessage('Invalid Department Id.'),
     ], validateBody, grievanceMainController.moveGrievanceBetweenCaraDepts
 );

@@ -1,6 +1,6 @@
 // services/ollamaReply.js
 const { default: ollama } = require('ollama');
-const modelName = 'llama3.2';
+const modelName = 'llama3.2:3b';
 
 async function generateReply(prompt) {
   console.log("streaming")

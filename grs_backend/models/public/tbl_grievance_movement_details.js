@@ -10,12 +10,12 @@ const GrievanceMovementDetail = sequelize().define('tbl_grievance_movement_detai
         primaryKey: true,
         autoIncrement: true
     },
-    grievance_token: {
+    email_token: {
         type: DataTypes.BIGINT,
         allowNull: false,
         references: {
             model: GrievanceDetail,
-            key: 'grievance_token'
+            key: 'email_token'
         }
     },
     dept_move_from: {

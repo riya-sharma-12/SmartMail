@@ -50,18 +50,18 @@ const registerGrievance = async (req, res) => {
             uploadedDocPath = uploadedFile?.filename;
         }
         if (applicant_reg_on_carings == 1 && !applicant_regno) { return res.status(404).send({ status: env.s404, msg: "Registraction No is Not Found" }); }
-        let grievance_token = await getTokenNumber();
-        if (!grievance_token) { return res.status(500).send({ status: env.s500, msg: "Failed to Generate New Grievance Token No" }); }
+        let email_token= await getTokenNumber();
+        if (!email_token) { return res.status(500).send({ status: env.s500, msg: "Failed to Generate New Grievance Token No" }); }
         if (grievance_type == 0) {
-            grievance_token = 'Q' + grievance_token;
+            email_token= 'Q' + email_token;
         } else if (grievance_type == 1) {
-            grievance_token = 'C' + grievance_token;
+            email_token= 'C' + email_token;
         } else {
             return res.status(422).send({ status: env.s422, msg: "Grievance Category is Incorrect" });
         }
-        //console.log("getTokenNumber", grievance_token);
+        //console.log("getTokenNumber", email_token);
         const grievancerData = {
-            grievance_token: grievance_token,
+            email_token: email_token,
             applicant_type: applicant_type,
             applicant_reg_on_carings: applicant_reg_on_carings,
             applicant_regno: applicant_regno || "NA",
@@ -82,7 +82,7 @@ const registerGrievance = async (req, res) => {
             grievance_entry_date: new Date(),
         };
         const grievanceData = {
-            grievance_token: grievance_token,
+            email_token: email_token,
             grievance_sub_token_no: 1,
             grievance: grievance,
             grievance_uploaded_doc_path: uploadedDocPath,//grievance_uploaded_doc_path || "NA",
@@ -108,7 +108,7 @@ const registerGrievance = async (req, res) => {
         };
         const newGrievance = await newGrievanceTransaction();
         if (!newGrievance) { return res.status(417).send({ status: env.s417, msg: "Failed to Register New Grievance.", data: [] }); };
-        return res.status(200).send({ status: env.s200, msg: "New Grievance Registered Successfully.", data: { grievanceTokenNo: grievance_token } });
+        return res.status(200).send({ status: env.s200, msg: "New Grievance Registered Successfully.", data: { grievanceTokenNo: email_token} });
     } catch (error) {
         //console.log("error", error);
         logger.error(`server error inside registerGrievance funtion${error}`);
@@ -118,14 +118,14 @@ const registerGrievance = async (req, res) => {
 
 const grievanceResponse = async (req, res) => {
     try {
-        const { grievance_token, responser_type, responser_id, response_type, response } = req.body;
-        const grievanceDetail = await grievanceEntryModel.findByPk(grievance_token);
+        const { email_token, responser_type, responser_id, response_type, response } = req.body;
+        const grievanceDetail = await grievanceEntryModel.findByPk(email_token);
         if (!grievanceDetail) { return res.status(404).send({ status: env.s404, msg: "Grievance Not Found!" }); };
         const grievanceStatus = grievance.status;
-        if (grievanceStatus == 2) { return res.status(422).send({ status: env.s422, msg: `Grievance -- ${grievance_token} Ticked is Already Closed, It can't modified futher.` }); };
+        if (grievanceStatus == 2) { return res.status(422).send({ status: env.s422, msg: `Grievance -- ${email_token} Ticked is Already Closed, It can't modified futher.` }); };
         const grievance = await grievancesModel.findOne({
             where: {
-                grievance_token: grievance_token,
+                email_token: email_token,
                 order: [['grievance_sub_token_no', 'DESC']],
                 limit: 1,
             }
@@ -133,7 +133,7 @@ const grievanceResponse = async (req, res) => {
         if (!grievance) { return res.status(404).send({ status: env.s404, msg: "Grievance Not Found!" }); };
         let subTokenNo = grievance.grievance_sub_token_no;
         const grievanceResponseData = {
-            grievance_token: grievance_token,
+            email_token: email_token,
             grievance_sub_token_no: subTokenNo,
             responser_type: responser_type,
             responser_id: responser_id,
@@ -176,14 +176,14 @@ const grievanceResponse = async (req, res) => {
 
 const subGrievanceEntry = async (req, res) => {
     try {
-        const { grievance_token, grievance, grievance_uploaded_doc_path, user_ip, grievance_date } = req.body;
-        const grievanceDetail = await grievanceEntryModel.findByPk(grievance_token);
+        const { email_token, grievance, grievance_uploaded_doc_path, user_ip, grievance_date } = req.body;
+        const grievanceDetail = await grievanceEntryModel.findByPk(email_token);
         if (!grievanceDetail) { return res.status(404).send({ status: env.s404, msg: "Grievance Not Found!" }); };
         const grievanceStatus = grievanceDetail.status;
-        if (grievanceStatus == 2) { return res.status(422).send({ status: env.s422, msg: `Grievance -- ${grievance_token} Ticked is Already Closed, It can't modified futher.` }); };
+        if (grievanceStatus == 2) { return res.status(422).send({ status: env.s422, msg: `Grievance -- ${email_token} Ticked is Already Closed, It can't modified futher.` }); };
         const lastSubGrievance = await grievancesModel.findOne({
             where: {
-                grievance_token: grievance_token,
+                email_token: email_token,
                 order: [['grievance_sub_token_no', 'DESC']],
                 limit: 1,
             }
@@ -193,7 +193,7 @@ const subGrievanceEntry = async (req, res) => {
             subTokenNo = lastSubGrievance.grievance_sub_token_no + 1;
         }
         const subGrievanceData = {
-            grievance_token: grievance_token,
+            email_token: email_token,
             grievance_sub_token_no: subTokenNo,
             grievance: grievance,
             grievance_uploaded_doc_path: "NA",//grievance_uploaded_doc_path || "NA",
@@ -229,7 +229,7 @@ const grievanceDashboard = async (req, res) => {
         try {
             const grievanceStats = await grievanceEntryModel.findAll({
                 attributes: [
-                    [Sequelize.fn('COUNT', Sequelize.col('grievance_token')), 'total_grievance'],
+                    [Sequelize.fn('COUNT', Sequelize.col('email_token')), 'total_grievance'],
                     [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 1 THEN 1 ELSE 0 END')), 'total_query'],
                     [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 0 THEN 1 ELSE 0 END')), 'total_complains'],
                     [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 1 AND grievance_category = 1 THEN 1 ELSE 0 END')), 'total_ap_query'],
@@ -244,7 +244,7 @@ const grievanceDashboard = async (req, res) => {
             // const grievanceYearlyStats = await grievanceEntryModel.findAll({
             //     attributes: [
             //         [Sequelize.fn('EXTRACT', Sequelize.literal('YEAR FROM "grievance_entry_date"')), 'year'],
-            //         [Sequelize.fn('COUNT', Sequelize.col('grievance_token')), 'total_grievance'],
+            //         [Sequelize.fn('COUNT', Sequelize.col('email_token')), 'total_grievance'],
             //         [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 1 THEN 1 ELSE 0 END')), 'total_query'],
             //         [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 0 THEN 1 ELSE 0 END')), 'total_complains'],
             //         [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 1 AND grievance_category = 1 THEN 1 ELSE 0 END')), 'total_ap_query'],
@@ -269,7 +269,7 @@ const grievanceDashboard = async (req, res) => {
             const grievanceMonthlyStats = await grievanceEntryModel.findAll({
                 attributes: [
                     [Sequelize.fn('EXTRACT', Sequelize.literal('MONTH FROM "grievance_entry_date"')), 'month'],
-                    [Sequelize.fn('COUNT', Sequelize.col('grievance_token')), 'total_grievance'],
+                    [Sequelize.fn('COUNT', Sequelize.col('email_token')), 'total_grievance'],
                     [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 1 THEN 1 ELSE 0 END')), 'total_query'],
                     [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 0 THEN 1 ELSE 0 END')), 'total_complains'],
                     [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 1 AND grievance_category = 1 THEN 1 ELSE 0 END')), 'total_ap_query'],
@@ -294,7 +294,7 @@ const grievanceDashboard = async (req, res) => {
             const grievanceCurrYearMonthlyStats = await grievanceEntryModel.findAll({
                 attributes: [
                     [Sequelize.fn('EXTRACT', Sequelize.literal('MONTH FROM "grievance_entry_date"')), 'month'],
-                    [Sequelize.fn('COUNT', Sequelize.col('grievance_token')), 'total_grievance'],
+                    [Sequelize.fn('COUNT', Sequelize.col('email_token')), 'total_grievance'],
                     [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 1 THEN 1 ELSE 0 END')), 'total_query'],
                     [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 0 THEN 1 ELSE 0 END')), 'total_complains'],
                     [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 1 AND grievance_category = 1 THEN 1 ELSE 0 END')), 'total_ap_query'],
@@ -331,7 +331,7 @@ const grievanceDashboard = async (req, res) => {
         try {
             const grievanceStats = await grievanceEntryModel.findAll({
                 attributes: [
-                    [Sequelize.fn('COUNT', Sequelize.col('grievance_token')), 'total_grievance'],
+                    [Sequelize.fn('COUNT', Sequelize.col('email_token')), 'total_grievance'],
                     [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 1 THEN 1 ELSE 0 END')), 'total_query'],
                     [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 0 THEN 1 ELSE 0 END')), 'total_complains'],
                     [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 1 AND grievance_category = 1 THEN 1 ELSE 0 END')), 'total_ap_query'],
@@ -349,7 +349,7 @@ const grievanceDashboard = async (req, res) => {
             // const grievanceYearlyStats = await grievanceEntryModel.findAll({
             //     attributes: [
             //         [Sequelize.fn('EXTRACT', Sequelize.literal('YEAR FROM "grievance_entry_date"')), 'year'],
-            //         [Sequelize.fn('COUNT', Sequelize.col('grievance_token')), 'total_grievance'],
+            //         [Sequelize.fn('COUNT', Sequelize.col('email_token')), 'total_grievance'],
             //         [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 1 THEN 1 ELSE 0 END')), 'total_query'],
             //         [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 0 THEN 1 ELSE 0 END')), 'total_complains'],
             //         [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 1 AND grievance_category = 1 THEN 1 ELSE 0 END')), 'total_ap_query'],
@@ -374,7 +374,7 @@ const grievanceDashboard = async (req, res) => {
             const grievanceMonthlyStats = await grievanceEntryModel.findAll({
                 attributes: [
                     [Sequelize.fn('EXTRACT', Sequelize.literal('MONTH FROM "grievance_entry_date"')), 'month'],
-                    [Sequelize.fn('COUNT', Sequelize.col('grievance_token')), 'total_grievance'],
+                    [Sequelize.fn('COUNT', Sequelize.col('email_token')), 'total_grievance'],
                     [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 1 THEN 1 ELSE 0 END')), 'total_query'],
                     [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 0 THEN 1 ELSE 0 END')), 'total_complains'],
                     [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 1 AND grievance_category = 1 THEN 1 ELSE 0 END')), 'total_ap_query'],
@@ -401,7 +401,7 @@ const grievanceDashboard = async (req, res) => {
             const grievanceCurrYearMonthlyStats = await grievanceEntryModel.findAll({
                 attributes: [
                     [Sequelize.fn('EXTRACT', Sequelize.literal('MONTH FROM "grievance_entry_date"')), 'month'],
-                    [Sequelize.fn('COUNT', Sequelize.col('grievance_token')), 'total_grievance'],
+                    [Sequelize.fn('COUNT', Sequelize.col('email_token')), 'total_grievance'],
                     [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 1 THEN 1 ELSE 0 END')), 'total_query'],
                     [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 0 THEN 1 ELSE 0 END')), 'total_complains'],
                     [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN grievance_type = 1 AND grievance_category = 1 THEN 1 ELSE 0 END')), 'total_ap_query'],
@@ -445,17 +445,17 @@ const grievanceDashboard = async (req, res) => {
 
 const grievanceViewReport = async (req, res) => {
     try {
-        const { grievance_token } = req.body;
+        const { email_token} = req.body;
         //console.log(req.body)
-        if (!grievance_token) { return res.status(404).send({ status: env.s404, msg: "Grievance Token Or User Type Not Found!" }); };
-        const grievance = await grievanceEntryModel.findByPk(grievance_token);
+        if (!email_token) { return res.status(404).send({ status: env.s404, msg: "Grievance Token Or User Type Not Found!" }); };
+        const grievance = await grievanceEntryModel.findByPk(email_token);
         if (!grievance) { return res.status(404).send({ status: env.s404, msg: "Grievance Not Found!" }); };
         const grievanceAllQueys = await grievancesModel.findAll({
             where: {
-                grievance_token: grievance_token
+                email_token: email_token
             }
         });
-        const grievance_resp = await grievanceresponsesModel.findAll({ where: { grievance_token: grievance_token } });
+        const grievance_resp = await grievanceresponsesModel.findAll({ where: { email_token: email_token} });
         return res.status(200).send({ status: env.s200, msg: "Grievance Report Data Fetched Successfully.", grievanceViewReportData: { grievanceDetails: grievance, grievanceAllQueys: grievanceAllQueys, grievanceResponceDetails: grievance_resp } });
     } catch (error) {
         logger.error(`server error inside getAllGrievanceSubj funtion with a error message --${error?.message}, error -- ${error} `);
@@ -475,14 +475,14 @@ const grievanceResponseViaCaringStkh = async (req, res) => {
         }
         //console.log(req.body, uploadedFile);
         //return res.status(200).send({ status: env.s200, msg: "Success" });
-        const { grievance_token, responser_type, responser_id, response_type, response } = req.body;
-        const grievanceDetail = await grievanceEntryModel.findByPk(grievance_token);
+        const { email_token, responser_type, responser_id, response_type, response } = req.body;
+        const grievanceDetail = await grievanceEntryModel.findByPk(email_token);
         if (!grievanceDetail) { return res.status(404).send({ status: env.s404, msg: "Grievance Not Found!" }); };
         const grievanceStatus = grievanceDetail.grievance_status;
-        if (grievanceStatus == 1) { return res.status(422).send({ status: env.s422, msg: `Grievance -- ${grievance_token} Ticked is Already Closed, It can't modified futher.` }); };
+        if (grievanceStatus == 1) { return res.status(422).send({ status: env.s422, msg: `Grievance -- ${email_token} Ticked is Already Closed, It can't modified futher.` }); };
         const grievance = await grievancesModel.findOne({
             where: {
-                grievance_token: grievance_token,
+                email_token: email_token,
             },
             [Op.order]: [['grievance_sub_token_no', 'DESC']],
             limit: 1,
@@ -490,7 +490,7 @@ const grievanceResponseViaCaringStkh = async (req, res) => {
         if (!grievance) { return res.status(404).send({ status: env.s404, msg: "Grievance Not Found!" }); };
         let subTokenNo = grievance.grievance_sub_token_no;
         const grievanceResponseData = {
-            grievance_token: grievance_token,
+            email_token: email_token,
             grievance_sub_token_no: subTokenNo,
             responser_type: responser_type,
             responser_id: responser_id,

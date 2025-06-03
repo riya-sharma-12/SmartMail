@@ -165,9 +165,9 @@ const getAllClosedGrievances = async (req, res) => {
 //update grievance status to resolve
 const updateGrievanceStatusToResolved = async (req, res) => {
     try {
-        const { grievance_token } = req.body;
-        const grievanceDetail = await grievanceEntryModel.findByPk(grievance_token);
-        if (!grievanceDetail) { return res.status(409).send({ status: env.s409, msg: `Unable to find Grievance of No -- ${grievance_token}`, allGrievances: allGrievances }) };
+        const { email_token} = req.body;
+        const grievanceDetail = await grievanceEntryModel.findByPk(email_token);
+        if (!grievanceDetail) { return res.status(409).send({ status: env.s409, msg: `Unable to find Grievance of No -- ${email_token}`, allGrievances: allGrievances }) };
         grievanceDetail.grievance_status = 1;
         await grievanceDetail.save();
         return res.status(200).send({ status: env.s200, msg: "Grievances Status Updated Successfully" });
@@ -182,16 +182,16 @@ const updateGrievanceStatusToResolved = async (req, res) => {
 // move cara-grievance
 const moveGrievanceBetweenCaraDepts = async (req, res) => {
     try {
-        const { grievance_token, dept_move_to } = req.body;
-        const grievanceDetail = await grievanceEntryModel.findByPk(grievance_token);
+        const { email_token, dept_move_to } = req.body;
+        const grievanceDetail = await grievanceEntryModel.findByPk(email_token);
         if (!grievanceDetail) { return res.status(404).send({ status: env.s404, msg: "Grievance Not Found!" }); };
         const grievanceStatus = grievanceDetail.status;
-        if (grievanceStatus == 2) { return res.status(422).send({ status: env.s422, msg: `Grievance -- ${grievance_token} Ticked is Already Closed, It can't modified futher.` }); };
+        if (grievanceStatus == 2) { return res.status(422).send({ status: env.s422, msg: `Grievance -- ${email_token} Ticked is Already Closed, It can't modified futher.` }); };
         const mover_id = req.user.user_id;
         const dept_move_from = req.user.user_dept || 0;
         const ipAddress = req.userIp;
         const grievanceMovedEntry = {
-            'grievance_token': grievance_token,
+            'email_token': email_token,
             'dept_move_from': dept_move_from,
             'dept_move_to': dept_move_to,
             'mover_id': mover_id,
@@ -230,13 +230,13 @@ const moveGrievanceBetweenCaraDepts = async (req, res) => {
 const sendGrievanceReply = async (req, res) => {
     const transaction = await sequelizedbConnection().transaction();
     try {
-        const { grievance_token, cc_ids, reply_body } = req.body;
+        const { email_token, cc_ids, reply_body } = req.body;
         const reply_type = parseInt(req.body.reply_type);
-        const grievanceDetail = await grievanceEntryModel.findByPk(grievance_token);
+        const grievanceDetail = await grievanceEntryModel.findByPk(email_token);
         if (!grievanceDetail) { return res.status(404).send({ status: env.s404, msg: "Grievance Not Found!" }); };
         // Create a new row in grievanceReplyModel
         const grievanceReplyDetails = {
-            grievance_token: grievance_token,
+            email_token: email_token,
             responcer_id: req.user.user_id,
             cc_ids: cc_ids,
             reply_body: reply_body,
@@ -247,7 +247,7 @@ const sendGrievanceReply = async (req, res) => {
 
         const lastGrievanceReply = await grievanceReplyModel.findOne({
             where: {
-                grievance_token: grievance_token
+                email_token: email_token
             },
             order: [['grievance_reply_date', 'DESC']]
         });
@@ -261,7 +261,7 @@ const sendGrievanceReply = async (req, res) => {
         await grievanceReplyModel.create(grievanceReplyDetails, { transaction: transaction });
 
         // Send grievance reply email
-        const sendGrievanceReplyMailResp = await sendGrievanceReplyMail(grievanceDetail.applicant_email_id, cc_ids, grievanceDetail.grievance_mail_subject, grievance_token, reply_body, grievanceDetail.mail_message_id);
+        const sendGrievanceReplyMailResp = await sendGrievanceReplyMail(grievanceDetail.applicant_email_id, cc_ids, grievanceDetail.grievance_mail_subject, email_token, reply_body, grievanceDetail.mail_message_id);
 
         //console.log("sendGrievanceReplyMailResp", sendGrievanceReplyMailResp);
 
@@ -281,10 +281,10 @@ const sendGrievanceReply = async (req, res) => {
 
 const grievanceReplyLog = async (req, res) => {
     try {
-        const { grievance_token } = req.body;
+        const { email_token} = req.body;
         const grievanceDetail = await grievanceEntryModel.findOne({
             attributes: [
-                'grievance_token',
+                'email_token',
                 'applicant_email_id',
                 'mail_message_id',
                 'grievance_mail_subject',
@@ -311,15 +311,15 @@ const grievanceReplyLog = async (req, res) => {
                 }
             ],
             where: {
-                grievance_token: grievance_token
+                email_token: email_token
             },
             raw: true // Flatten nested objects
         });
-        //const grievanceDetail = await grievanceEntryModel.findByPk(grievance_token);
-        if (!grievanceDetail) { return res.status(409).send({ status: env.s409, msg: `Unable to find Grievance of Token No -- ${grievance_token}` }) };
+        //const grievanceDetail = await grievanceEntryModel.findByPk(email_token);
+        if (!grievanceDetail) { return res.status(409).send({ status: env.s409, msg: `Unable to find Grievance of Token No -- ${email_token}` }) };
         const grievanceReplyHistory = await grievanceReplyModel.findAll({
             where: {
-                grievance_token: grievance_token
+                email_token: email_token
             },
             order: [['grievance_reply_date']]
         })
@@ -335,14 +335,14 @@ const grievanceReplyLog = async (req, res) => {
 // move cara-grievance
 const pushBackGrievanceFromConsultantLevel = async (req, res) => {
     try {
-        const { grievance_token } = req.body;
-        const grievanceDetail = await grievanceEntryModel.findByPk(grievance_token);
+        const { email_token} = req.body;
+        const grievanceDetail = await grievanceEntryModel.findByPk(email_token);
         if (!grievanceDetail) { return res.status(404).send({ status: env.s404, msg: "Grievance Not Found!" }); };
         const grievanceStatus = grievanceDetail.status;
-        if (grievanceStatus == 2) { return res.status(422).send({ status: env.s422, msg: `Grievance -- ${grievance_token} Ticked is Already Closed, It can't modified futher.` }); };
+        if (grievanceStatus == 2) { return res.status(422).send({ status: env.s422, msg: `Grievance -- ${email_token} Ticked is Already Closed, It can't modified futher.` }); };
         const lastMovementOfGrievance = await grievanceMovedModel.findOne({
             where: {
-                grievance_token: grievance_token
+                email_token: email_token
             },
             order: [['movement_date', 'DESC']]
         })
@@ -353,7 +353,7 @@ const pushBackGrievanceFromConsultantLevel = async (req, res) => {
         const dept_move_to = lastMovementOfGrievance.dept_move_from;
         const ipAddress = req.userIp;
         const grievanceMovedEntry = {
-            'grievance_token': grievance_token,
+            'email_token': email_token,
             'dept_move_from': dept_move_from,
             'dept_move_to': dept_move_to,
             'mover_id': mover_id,

@@ -10,12 +10,12 @@ const GrievanceReply = sequelize().define('tbl_grievance_reply', {
         primaryKey: true,
         autoIncrement: true
     },
-    grievance_token: {
+    email_token: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: 'tbl_grievance_details_global',
-            key: 'grievance_token'
+            key: 'email_token'
         }
     },
     responcer_id: {
@@ -54,8 +54,8 @@ const GrievanceReply = sequelize().define('tbl_grievance_reply', {
 });
 
 GrievanceReply.belongsTo(GrievanceEntry, {
-    foreignKey: 'grievance_token',
-    targetKey: 'grievance_token',
+    foreignKey: 'email_token',
+    targetKey: 'email_token',
     as: 'grievanceEntry'
 });
 
