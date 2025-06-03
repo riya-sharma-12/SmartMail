@@ -15,26 +15,28 @@ const AllGrievancesView = () => {
     //const [caraDepts, setCaraDepts] = useState([]);
 
     const columns = [
-        { field: 'from_email', headerName: 'Email From', width: 150 },
-        // {
-        //     field: 'grievance_dept_code', // Assuming 'action' is the field for the selector column
-        //     headerName: 'Take Action',
-        //     width: 200,
-        //     renderCell: (params) => (
-        //         <FormControl fullWidth>
-        //             <InputLabel id="demo-simple-select-label">Select Department</InputLabel>
-        //             <Select
-        //                 value={params.row.grievance_dept_code} // Assuming 'action' is a property in each row
-        //                 label={"Select Department"}
-        //                 onChange={(e) => moveGrievanceBetweenCaraDepts(params.row, e.target.value)}
-        //             >
-        //                 {caraDepts.map((item, ind) => <MenuItem key={ind} value={item.dept_id}>{item.dept_name}</MenuItem>)}
-        //             </Select>
-        //         </FormControl>
-        //     ),
-        // },
-        { field: 'email-subject', headerName: 'Subject', width: 200 },
-        { field: 'email-body', headerName: 'Body', width: 200 },
+         {
+    field: 'from_email',
+    headerName: 'Email From',
+    width: 150,
+    valueFormatter: (params) => {
+      let email = params.value || '';
+      if (email.startsWith('"')) {
+        email = email.substring(1); // Remove leading "
+      }
+      return email;
+    },
+  },
+  {
+  field: 'email-subject',
+  headerName: 'Subject',
+  width: 200,
+  valueFormatter: (params) => {
+    return params.value?.replace(/^[“"]|[”"]$/g, '') || '';
+  }
+},
+
+    { field: 'email-body', headerName: 'Body', width: 200 },
         { field: 'email-category', headerName: 'Categories', width: 200 },
          { field: 'email_status', headerName: 'Status', width: 200, valueGetter: (params) => (params.row.email_status == 0 ? 'No' : 'Yes')  },
         { field: 'email_created_at', headerName: 'Created At', width: 200 },
@@ -60,51 +62,6 @@ const AllGrievancesView = () => {
             setLoadingOverlay(false);
         }
     }
-
-    // const getAllCaraDepts = async () => {
-    //     try {
-    //         setLoadingOverlay(true);
-    //         const { data, error } = await CustomGetApi('/admin/getAllEmails');
-    //         if (!data) toast.error(`Failed!, ${error}`)
-    //         else {
-    //             //console.log(data);
-    //             toast.success(`Success!, ${data?.msg}`)
-    //             //setCaraDepts(data?.allCaraDepts);
-    //         }
-    //     } catch (err) {
-    //         toast.error(`Something Went Wrong!, Getting Exception, ${err}`);
-    //     } finally {
-    //         setLoadingOverlay(false);
-    //     }
-    // }
-
-    // const moveGrievanceBetweenCaraDepts = async (row, dept_move_to) => {
-    //     try {
-    //         setLoadingOverlay(true);
-    //         //console.log("inside moveGrievanceBetweenCaraDepts", row, dept_move_to)
-    //         const apiData = {
-    //             email_token: row?.email_token,
-    //             dept_move_to: dept_move_to
-    //         };
-    //         const { data, error } = await CustomPostApi('/admin/getAllEmails', apiData);
-    //         //console.log(data, error);
-    //         if (!data) {
-    //             //console.log("error moveGrievanceBetweenCaraDepts", error);
-    //             return toast.error(`Failed!, ${error}`)
-    //         }
-    //         else {
-    //             getAllGrievances();
-    //             return toast.success('Grievances Moved Successfully.');
-    //         }
-    //     } catch (err) {
-    //         //console.log("catch error moveGrievanceBetweenCaraDepts", err)
-    //         toast.error(`Something Went Wrong!, Getting Exception, ${err}`);
-    //     } finally {
-    //         setLoadingOverlay(false);
-    //     }
-    // }
-
-
 
     useEffect(() => {
         getAllGrievances();

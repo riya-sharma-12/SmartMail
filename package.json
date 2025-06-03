@@ -19,6 +19,7 @@
     "imap-simple": "^5.1.0",
     "mailparser": "^3.7.2",
     "node-cron": "^4.0.4",
+    "nodemailer": "^7.0.3",
     "ollama": "^0.5.15",
     "pg": "^8.16.0",
     "sequelize": "^6.37.7",

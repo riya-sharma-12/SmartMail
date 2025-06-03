@@ -11,30 +11,15 @@ async function saveEmailToDB(emailData) {
     category,
     status,
     created_at,
-    received_at
+    received_at,
+    email_message_id
   } = emailData;
 
   const resp_id = uuidv4();
   const org_id = '11111111-1111-1111-1111-111111111111';
 
-  // const query = `
-  //   INSERT INTO emails (
-  //     resp_id, org_id, from_email,
-  //     subject, body, category, status,
-  //     created_at, received_at
-  //   ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
-  // `;
-
-  // const values = [
-  //   resp_id, org_id, from_email,
-  //   subject, body, category, status,
-  //   created_at, received_at
-  // ];
-  
 
   try {
-  //   await db.query(query, {
-  // bind: values
   await Email.create({
   resp_id: resp_id,
   org_id: org_id,
@@ -44,7 +29,8 @@ async function saveEmailToDB(emailData) {
   category: category,
   status: status,
   created_at: created_at,
-  received_at: received_at
+  received_at: received_at,
+  email_message_id:email_message_id
 });
 console.log('Email saved to DB with ID:', resp_id);
   } catch (err) {

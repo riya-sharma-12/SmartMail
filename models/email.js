@@ -31,6 +31,11 @@ const Email = sequelize.define(
       allowNull: true,
     },
 
+    email_message_id: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+
     body: {
       type: DataTypes.TEXT,
       allowNull: true,

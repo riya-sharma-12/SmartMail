@@ -47,6 +47,7 @@ function emailController() {
 
           msg.once('end', async () => {
             const parsed = await simpleParser(rawData);
+            console.log("--------parsed----------", parsed?.messageId, parsed);
             console.log('\n--- New Email ---');
             console.log('From:', parsed.from.text);
             console.log('Subject:', parsed.subject);
@@ -62,7 +63,8 @@ const emailData = {
   category: category,
   status: 0, 
   created_at: new Date(),
-  received_at: parsed.date || new Date()
+  received_at: parsed.date || new Date(),
+  email_message_id:parsed?.messageId
 };
 
 

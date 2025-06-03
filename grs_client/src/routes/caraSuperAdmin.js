@@ -11,7 +11,7 @@ const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')))
 const ViewAllCaraUsers = Loadable(lazy(() => import('views/caraSuperAdminViews/viewAllCaraUsers')));
 const RegisterGrievance = Loadable(lazy(() => import('views/caraSuperAdminViews/registerGrievance')));
 // grievances reports
-const AllGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/allGrievancesView')));
+const AllGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/allEmails')));
 const DistGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/distGrievancesView')));
 const RepliedEmailsView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/repliedEmailView')));
 const PushedbackGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/pushedbackGrievancesView')));

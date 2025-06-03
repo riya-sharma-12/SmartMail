@@ -370,7 +370,7 @@ const SearchSection = () => {
               />
               <Divider sx={{ marginTop: '50px' }} /> */}
               <DialogContentText variant='h2' sx={{ color: theme.palette.primary.main }}>
-                Grievance Reply History.
+                Emails Found:
               </DialogContentText>
               <Grid item lg={12} md={12} sm={12} xs={12}>
                 <DataGrid

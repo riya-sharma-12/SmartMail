@@ -59,10 +59,8 @@ Draft reply:
       // console.log(prompt);
       const replyText = llm.split('<END_REPLY>')[0].trim();
       const reply_id = uuidv4();
-      const checkResp = await Reply.find(where:{resp_id:email.resp_id});
-      if(checkResp){
-        return
-      }
+      const checkResp = await Reply.findOne({ where: { resp_id: email.resp_id } });
+      if(checkResp) return 1;
       await Reply.create({
   llm_reply: replyText,
   final_reply: replyText,
