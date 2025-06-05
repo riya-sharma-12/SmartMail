@@ -111,7 +111,6 @@ const AllGrievancesView = () => {
           : item
       );
       setAllGrievances(updated);
-      setEditDialogOpen(false);
       toast.success('Reply updated in DB!');
     } else {
       toast.error('Failed to update reply in DB');
@@ -200,7 +199,7 @@ const handleSubmitReply = async () => {
         <DialogActions>
           <Button onClick={() => setEditDialogOpen(false)}>Cancel</Button>
           <Button variant="contained" onClick={handleSaveEditedReply}>Save</Button>
-          <Button variant="contained" color="success" onClick={handleSubmitReply}>Submit</Button>
+          <Button variant="contained" color="success" onClick={handleSubmitReply}>Send Reply</Button>
         </DialogActions>
       </Dialog>
     </Grid>

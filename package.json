@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "apexcharts": "^4.7.0",
     "axios": "^1.9.0",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
@@ -22,6 +23,7 @@
     "nodemailer": "^7.0.3",
     "ollama": "^0.5.15",
     "pg": "^8.16.0",
+    "react-apexcharts": "^1.7.0",
     "sequelize": "^6.37.7",
     "uuid": "^11.1.0"
   }

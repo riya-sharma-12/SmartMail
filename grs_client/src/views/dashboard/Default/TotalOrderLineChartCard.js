@@ -103,7 +103,7 @@ const TotalOrderLineChartCard = ({ isLoading, title, grievanceComplains, grievan
                       sx={{ color: 'inherit' }}
                       onClick={(e) => handleChangeTime(e, true)}
                     >
-                      Complains
+                      All Mails
                     </Button>
                     <Button
                       disableElevation
@@ -112,7 +112,7 @@ const TotalOrderLineChartCard = ({ isLoading, title, grievanceComplains, grievan
                       sx={{ color: 'inherit' }}
                       onClick={(e) => handleChangeTime(e, false)}
                     >
-                      Query&apos;s
+                      Replied Mails&apos;s
                     </Button>
                   </Grid>
                 </Grid>

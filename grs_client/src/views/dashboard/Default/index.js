@@ -5,7 +5,7 @@ import { Toaster, toast } from 'react-hot-toast';
 // project imports
 //import EarningCard from './EarningCard';
 import PopularCard from './PopularCard';
-import TotalOrderLineChartCard from './TotalOrderLineChartCard';
+import TotalEmailLineChartCard from './TotalOrderLineChartCard';
 import TotalIncomeDarkCard from './TotalIncomeDarkCard';
 import TotalIncomeLightCard from './TotalIncomeLightCard';
 import TotalGrievanceBarChart from './TotalGrievanceBarChart';
@@ -34,6 +34,7 @@ const Dashboard = () => {
   const [isLoading, setLoading] = useState(true);
   const [isLoadingOverlay, setLoadingOverlay] = useState(false);
   const [grievanceStats, setGrievanceStats] = useState([]);
+  const [allEmailsStats, setAllMailsStats] = useState({});
   const [grievanceYearlyStats, setGrievanceYearlyStats] = useState([]);
   //const [grievanceCurrYearMonthlyStats, setGrievanceCurrYearMonthlyStats] = useState([]);
   const [currentYearGrie, setCurrentYearGrie] = useState({});
@@ -49,6 +50,7 @@ const Dashboard = () => {
     try {
       setLoadingOverlay(true);
       const { data, error } = await CustomGetApi('/admin/getAllEmails');
+      console.log("dash-data", data)
       //console.log(data, error);
       if (!data) {
         toast.error(`Failed!, ${error}`)
@@ -56,12 +58,18 @@ const Dashboard = () => {
       else {
         toast.success('All Stats Fetched Successfully.');
         //console.log(data);
-        const grievanceData = data?.data;
+        const grievanceData = data?.allGrievances;
+        const allEmailsStats = {}
+        allEmailsStats.allMails = grievanceData?.length;
+        const repliedMails = grievanceData?.filter(item => item?.["email_status"] === 1).length;
+        allEmailsStats.repliedMails = repliedMails;
+      
         const grievanceStatsData = grievanceData?.grievanceStats;
         const grievanceYearlyStatsData = grievanceData?.grievanceYearlyStats;
         const grievanceCurrYearMonthlyStatsData = grievanceData?.grievanceCurrYearMonthlyStats;
         convetObjArray(setGrievanceStats, grievanceStatsData);
         convetObjArray(setGrievanceYearlyStats, grievanceYearlyStatsData);
+        setAllMailsStats(allEmailsStats)
         //convetObjArray(setGrievanceCurrYearMonthlyStats, grievanceCurrYearMonthlyStatsData);
         grievanceYearlyStatsData.map((item) => {
           //console.log(item,currentMonth, "check");
@@ -109,10 +117,10 @@ const Dashboard = () => {
         <Grid container spacing={gridSpacing}>
           <Grid item lg={4} md={6} sm={6} xs={12}>
             {/* <EarningCard isLoading={isLoading} grievanceStats={grievanceStats} /> */}
-            <TotalOrderLineChartCard isLoading={isLoading} title={"Total Grievances"} grievanceComplains={grievanceStats[0]?.total_complains} grievanceQuerys={grievanceStats[0]?.total_query} />
+            <TotalEmailLineChartCard isLoading={isLoading} title={"Total Grievancessss"} grievanceComplains={allEmailsStats?.allMails} grievanceQuerys={allEmailsStats?.repliedMails} />
           </Grid>
           <Grid item lg={4} md={6} sm={6} xs={12}>
-            <TotalOrderLineChartCard isLoading={isLoading} title={"Grievances Resolved"} grievanceComplains={grievanceStats[0]?.total_complains_resolved} grievanceQuerys={grievanceStats[0]?.total_query_resolved} />
+            <TotalEmailLineChartCard isLoading={isLoading} title={"Grievances Resolved"} grievanceComplains={grievanceStats[0]?.total_complains_resolved} grievanceQuerys={grievanceStats[0]?.total_query_resolved} />
           </Grid>
           <Grid item lg={4} md={12} sm={12} xs={12}>
             <Grid container spacing={gridSpacing}>
