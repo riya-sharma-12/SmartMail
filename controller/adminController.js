@@ -20,6 +20,7 @@ const getAllEmails = async (req, res) => {
         email_status: email.status,
         email_created_at: email.created_at,
         email_received_at: email.received_at,
+        reply_id: firstReply.reply_id, 
         llm_reply: firstReply.llm_reply || '',
         final_reply: firstReply.final_reply || '',
         email_replied_at: firstReply.replied_at || ''

@@ -5,20 +5,25 @@ const nodemailer = require('nodemailer');
 
 
 async function saveReply(req, res) {
+  const { reply_id, final_reply } = req.body;
+
+  if (!reply_id || !final_reply) {
+    return res.status(400).json({ success: false, msg: 'Missing required fields' });
+  }
+
   try {
-    const { replyId, finalReply } = req.body;
-    if (!replyId || !finalReply) return res.status(400).json({ error: 'Missing fields' });
+    const updated = await Reply.update(
+      { final_reply: final_reply },
+      { where: { reply_id } }
+    );
 
-    const reply = await Reply.findOne({ where: { reply_id: replyId } });
-    if (!reply) return res.status(404).json({ error: 'Reply not found' });
+    if (updated[0] === 0) {
+      return res.status(404).json({ success: false, msg: 'Reply not found' });
+    }
 
-    reply.final_reply = finalReply;
-    await reply.save();
-
-    res.json({ message: 'Reply saved successfully' });
+    return res.status(200).json({ success: true, msg: 'Reply updated successfully' });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
+    return res.status(500).json({ success: false, msg: 'Error updating reply', error: err.message });
   }
 }
 
