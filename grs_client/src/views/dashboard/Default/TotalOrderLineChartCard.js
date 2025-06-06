@@ -13,12 +13,14 @@ import MainCard from 'ui-component/cards/MainCard';
 import SkeletonTotalOrderCard from 'ui-component/cards/Skeleton/EarningCard';
 
 import ChartDataMonth from './chart-data/total-order-month-line-chart';
+import CustomChartData from './chart-data/custom-chart-bar';
 import ChartDataYear from './chart-data/total-order-year-line-chart';
 
 // assets
 import EarningIcon from 'assets/images/icons/earning.svg';
 //import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { all } from 'axios';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: theme.palette.primary.dark,
@@ -64,14 +66,28 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ==============================|| DASHBOARD - TOTAL ORDER LINE CHART CARD ||============================== //
 
-const TotalOrderLineChartCard = ({ isLoading, title, grievanceComplains, grievanceQuerys }) => {
+const TotalOrderLineChartCard = ({ isLoading, title, grievanceComplains, grievanceQuerys, allMailsData, allRepliedMails}) => {
   const theme = useTheme();
-
+  let xAxisArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  console.log("title", title, allMailsData)
+  let allMailsByDay = [];
+  if(title==="Mails Stats By Day"){
+    console.log("inside if")
+    xAxisArray = [];
+    console.log("allMailsData", allMailsData)
+    allMailsData?.map((item,index)=>{
+      console.log("date", item)
+      xAxisArray.push(item["date"])
+      allMailsByDay.push(item["count"])
+    })
+    allMailsData = allMailsByDay;
+  };
+  
+   console.log("inside if2", xAxisArray, allMailsData)
   const [timeValue, setTimeValue] = useState(false);
   const handleChangeTime = (event, newValue) => {
     setTimeValue(newValue);
   };
-
   return (
     <>
       {isLoading ? (
@@ -103,7 +119,7 @@ const TotalOrderLineChartCard = ({ isLoading, title, grievanceComplains, grievan
                       sx={{ color: 'inherit' }}
                       onClick={(e) => handleChangeTime(e, true)}
                     >
-                      All Mails
+                    All Mails
                     </Button>
                     <Button
                       disableElevation
@@ -112,7 +128,7 @@ const TotalOrderLineChartCard = ({ isLoading, title, grievanceComplains, grievan
                       sx={{ color: 'inherit' }}
                       onClick={(e) => handleChangeTime(e, false)}
                     >
-                      Replied Mails&apos;s
+                      Replied Mails
                     </Button>
                   </Grid>
                 </Grid>
@@ -154,7 +170,8 @@ const TotalOrderLineChartCard = ({ isLoading, title, grievanceComplains, grievan
                     </Grid>
                   </Grid>
                   <Grid item xs={6}>
-                    {timeValue ? <Chart {...ChartDataMonth} /> : <Chart {...ChartDataYear} />}
+                    {/* <Chart {...ChartDataYear} /> */}
+                    {timeValue ? <Chart {...CustomChartData('Number of Mails', 'Mails per Month', xAxisArray, allMailsData)} /> : <Chart {...CustomChartData('Number of Replied Mails', 'Replied Mails per Month', xAxisArray, allRepliedMails)}/>}
                   </Grid>
                 </Grid>
               </Grid>

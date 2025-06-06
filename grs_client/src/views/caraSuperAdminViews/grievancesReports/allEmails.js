@@ -35,6 +35,7 @@ const AllGrievancesView = () => {
     },
     {
       field: 'email-subject',
+      type: 'string',
       headerName: 'Subject',
       width: 200,
       valueFormatter: (params) => params.value?.replace(/^[“"]|[”"]$/g, '') || ''
@@ -47,7 +48,9 @@ const AllGrievancesView = () => {
       width: 200,
       valueGetter: (params) => (params.row.email_status === 0 ? 'No' : 'Yes')
     },
-    { field: 'email_created_at', headerName: 'Created At', width: 200 },
+    { field: 'email_created_at', headerName: 'Created At', type:'date', width: 200, valueFormatter: (params) => {
+        return new Date(params.value).toLocaleDateString();
+      } },
     { field: 'email_received_at', headerName: 'Received At', width: 200 },
     { field: 'llm_reply', headerName: 'LLM Reply', width: 200 },
     {

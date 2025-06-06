@@ -2,8 +2,10 @@
 
 
 
-const chartData = {
-  type: 'line',
+const CustomChartData = (title, seriesName, categories, data) => {
+    console.log("check --", title, categories, data)
+    return {
+        type: 'line',
   height: 350, // Increased height for better axis visibility
   options: {
     chart: {
@@ -24,7 +26,7 @@ const chartData = {
       width: 3
     },
     xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'], // Add more months as needed
+      categories: categories, // Add more months as needed
       title: {
         text: 'Month'
       },
@@ -38,7 +40,7 @@ const chartData = {
       min: 0,
       max: 100,
       title: {
-        text: 'Number of Mails'
+        text: title
       },
       labels: {
         style: {
@@ -63,10 +65,11 @@ const chartData = {
   },
   series: [
     {
-      name: 'Mails per Month',
-      data: [45, 66, 41, 89, 25, 44, 9, 54] // These are sample mail counts for Jan–Aug
+      name: seriesName,
+      data: data // These are sample mail counts for Jan–Aug
     }
   ]
+    };
 };
 
-export default chartData;
+export default CustomChartData;

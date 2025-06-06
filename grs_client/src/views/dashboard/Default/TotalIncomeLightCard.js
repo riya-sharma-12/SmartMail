@@ -39,7 +39,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ==============================|| DASHBOARD - TOTAL INCOME LIGHT CARD ||============================== //
 
-const TotalIncomeLightCard = ({ isLoading, grievanceStats }) => {
+const TotalIncomeLightCard = ({ isLoading, allEmailsStats }) => {
   const theme = useTheme();
 
   return (
@@ -72,7 +72,7 @@ const TotalIncomeLightCard = ({ isLoading, grievanceStats }) => {
                   }}
                   primary={
                     <Typography variant="h4">
-                      {grievanceStats[0]?.total_query ? grievanceStats[0]?.total_query : 0}
+                      {allEmailsStats?.repliedMails}
                     </Typography>
                   }
                   secondary={
@@ -83,7 +83,7 @@ const TotalIncomeLightCard = ({ isLoading, grievanceStats }) => {
                         mt: 0.5
                       }}
                     >
-                      Total Querys
+                      Total Replied
                     </Typography>
                   }
                 />

@@ -62,8 +62,53 @@ const Dashboard = () => {
         const allEmailsStats = {}
         allEmailsStats.allMails = grievanceData?.length;
         const repliedMails = grievanceData?.filter(item => item?.["email_status"] === 1).length;
+        const allMailsByMonth = new Array(12).fill(0); // Initialize 12 months with 0
+        const allRepliedMailsByMonth = new Array(12).fill(0);
+        let allMailsByDay = [] // Initialize 12 months with 0
+        const allRepliedMailsByDay = [];
+        grievanceData?.forEach(item => {
+          const dateStr = item?.["email_created_at"];
+          if (dateStr) {
+            const date = new Date(dateStr);
+            const month = date.getMonth(); // 0 = Jan, 11 = Dec
+            allMailsByMonth[month]++;
+          }
+          if(item?.["email_status"]===1){
+            const dateStr = "2025-06-03T05:16:26.000Z"; //item?.["email_replied_at"];
+            const date = new Date(dateStr);
+            const month = date.getMonth();
+            allRepliedMailsByMonth[month]++;
+          }
+        });
+
+    const newGrivanceData = grievanceData;
+    const grouped = {};
+    const today = new Date();
+    const cutoffDate = new Date(today);
+    cutoffDate.setDate(today.getDate() - 11); // last 12 days including today
+
+  newGrivanceData
+    ?.filter((email) => {
+      const emailDate = new Date(email["email_created_at"]);
+      return emailDate >= cutoffDate;
+    }).forEach((email) => {
+    const date = new Date(email["email_created_at"]).toISOString().split('T')[0];
+    if (grouped[date]) {
+      grouped[date]++;
+    } else {
+      grouped[date] = 1;
+    }
+  });
+
+    
+  // Convert to array if needed
+        allMailsByDay = Object.entries(grouped).map(([date, count]) => ({ date, count }));
+        console.log("--allMailsByMonth--", allMailsByDay)
+        allEmailsStats.allMailsByMonth = allMailsByMonth;
+        allEmailsStats.allRepliedMailsByMonth = allRepliedMailsByMonth;
+        allEmailsStats.allMailsByDay = allMailsByDay;
+        allEmailsStats.allRepliedMailsByDay = allRepliedMailsByDay;
         allEmailsStats.repliedMails = repliedMails;
-      
         const grievanceStatsData = grievanceData?.grievanceStats;
         const grievanceYearlyStatsData = grievanceData?.grievanceYearlyStats;
         const grievanceCurrYearMonthlyStatsData = grievanceData?.grievanceCurrYearMonthlyStats;
@@ -79,7 +124,6 @@ const Dashboard = () => {
             setPreviousYearGrie(item)
           }
         });
-
         let grieBarInitialData = [...griesBarData];
         let compsBarInitialData = [...compsBarData];
         let querysBarInitialData = [...querysBarData];
@@ -117,18 +161,18 @@ const Dashboard = () => {
         <Grid container spacing={gridSpacing}>
           <Grid item lg={4} md={6} sm={6} xs={12}>
             {/* <EarningCard isLoading={isLoading} grievanceStats={grievanceStats} /> */}
-            <TotalEmailLineChartCard isLoading={isLoading} title={"Total Grievancessss"} grievanceComplains={allEmailsStats?.allMails} grievanceQuerys={allEmailsStats?.repliedMails} />
+            <TotalEmailLineChartCard isLoading={isLoading} title={"Mails Stats By Month"} grievanceComplains={allEmailsStats?.allMails} grievanceQuerys={allEmailsStats?.repliedMails} allMailsData={allEmailsStats?.allMailsByMonth} allRepliedMails={allEmailsStats?.allRepliedMailsByMonth}/>
           </Grid>
           <Grid item lg={4} md={6} sm={6} xs={12}>
-            <TotalEmailLineChartCard isLoading={isLoading} title={"Grievances Resolved"} grievanceComplains={grievanceStats[0]?.total_complains_resolved} grievanceQuerys={grievanceStats[0]?.total_query_resolved} />
+            <TotalEmailLineChartCard isLoading={isLoading} title={"Mails Stats By Day"} grievanceComplains={allEmailsStats?.allMails} grievanceQuerys={allEmailsStats?.repliedMails} allMailsData={allEmailsStats?.allMailsByDay} allRepliedMails={allEmailsStats?.allRepliedMailsByDay}/>
           </Grid>
           <Grid item lg={4} md={12} sm={12} xs={12}>
             <Grid container spacing={gridSpacing}>
               <Grid item sm={6} xs={12} md={6} lg={12}>
-                <TotalIncomeDarkCard isLoading={isLoading} grievanceStats={grievanceStats} />
+                <TotalIncomeDarkCard isLoading={isLoading} allEmailsStats={allEmailsStats} />
               </Grid>
               <Grid item sm={6} xs={12} md={6} lg={12}>
-                <TotalIncomeLightCard isLoading={isLoading} grievanceStats={grievanceStats} />
+                <TotalIncomeLightCard isLoading={isLoading} allEmailsStats={allEmailsStats} />
               </Grid>
             </Grid>
           </Grid>
@@ -139,9 +183,6 @@ const Dashboard = () => {
           <Grid item xs={12} md={8}>
             <TotalGrievanceBarChart isLoading={isLoading} griesBarData={griesBarData} compsBarData={compsBarData} querysBarData={querysBarData} resolvedGrieBarData={resolvedGrieBarData} />
           </Grid>
-          {/* <Grid item xs={12} md={4}>
-            <PopularCard isLoading={isLoading} grievanceYearlyStats={grievanceYearlyStats} currentYearGrie={currentYearGrie} previousYearGrie={previousYearGrie} />
-          </Grid> */}
         </Grid>
       </Grid>
     </Grid>
