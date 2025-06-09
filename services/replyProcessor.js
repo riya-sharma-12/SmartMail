@@ -35,7 +35,7 @@ async function processReplies(batchSize = 5) {
   }
 
   console.log(`Found ${emails.length} emails to draft replies for.`);
-  // emails = [emails[0]];
+  emails = [emails[0]];
   // Step 2: Generate and save replies
   const drafts = await Promise.allSettled(
     emails.map(async (email) => {

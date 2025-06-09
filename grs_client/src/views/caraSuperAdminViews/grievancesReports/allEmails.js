@@ -51,7 +51,9 @@ const AllGrievancesView = () => {
     { field: 'email_created_at', headerName: 'Created At', type:'date', width: 200, valueFormatter: (params) => {
         return new Date(params.value).toLocaleDateString();
       } },
-    { field: 'email_received_at', headerName: 'Received At', width: 200 },
+     { field: 'email_received_at', headerName: 'Received At', type:'date', width: 200, valueFormatter: (params) => {
+        return new Date(params.value).toLocaleDateString();
+      } },
     { field: 'llm_reply', headerName: 'LLM Reply', width: 200 },
     {
       field: 'final_reply',
@@ -70,7 +72,16 @@ const AllGrievancesView = () => {
         </div>
       )
     },
-    { field: 'email_replied_at', headerName: 'Replied At', width: 200 }
+   {
+  field: 'email_replied_at',
+  headerName: 'Reply Generated At',
+  type: 'date',
+  width: 200,
+  valueFormatter: (params) => {
+    const value = params?.value;
+    return value ? new Date(value).toLocaleDateString() : '';
+  }
+}
   ];
 
   const getAllGrievances = async () => {
@@ -124,20 +135,54 @@ const AllGrievancesView = () => {
 };
 
 
+// const handleSubmitReply = async () => {
+//   if (!selectedEmail?.reply_id) {
+//     toast.error('Reply ID missing, cannot submit reply');
+//     return;
+//   }
+//   try {
+//     const payload = {
+//       reply_id: selectedEmail.reply_id,
+//       resp_id: selectedEmail.email_token // or selectedEmail.resp_id if you renamed it
+//     };
+//     const response = await CustomPostApi('/reply/sendReplyEmail', payload);
+//     console.log("Reply sent response:", response);
+//     toast.success('Reply sent!');
+//     setEditDialogOpen(false);
+//   } catch (err) {
+//     toast.error('Failed to send reply');
+//   }
+// };
+
+
 const handleSubmitReply = async () => {
   if (!selectedEmail?.reply_id) {
     toast.error('Reply ID missing, cannot submit reply');
     return;
   }
+
   try {
     const payload = {
       reply_id: selectedEmail.reply_id,
-      resp_id: selectedEmail.email_token // or selectedEmail.resp_id if you renamed it
+      resp_id: selectedEmail.email_token
     };
+
     const response = await CustomPostApi('/reply/sendReplyEmail', payload);
     console.log("Reply sent response:", response);
-    toast.success('Reply sent!');
-    setEditDialogOpen(false);
+
+    // ✅ Accept a successful HTTP status code even if 'success' field is missing
+    if (response?.status === 200 || response?.data) {
+      const updated = allGrievances.map((item) =>
+        item.reply_id === selectedEmail.reply_id
+          ? { ...item, email_status: 1 }
+          : item
+      );
+      setAllGrievances(updated);
+      toast.success('Reply sent!');
+      setEditDialogOpen(false);
+    } else {
+      toast.error('Failed to send reply');
+    }
   } catch (err) {
     toast.error('Failed to send reply');
   }

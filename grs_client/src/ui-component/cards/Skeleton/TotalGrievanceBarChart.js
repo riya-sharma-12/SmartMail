@@ -1,39 +1,69 @@
 // material-ui
-import { Card, CardContent, Grid } from '@mui/material';
-import Skeleton from '@mui/material/Skeleton';
+import { Card, CardContent, Typography } from '@mui/material';
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 
-// project imports
-import { gridSpacing } from 'store/constant';
+// Register Chart.js components
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-// ==============================|| SKELETON TOTAL GROWTH BAR CHART ||============================== //
+const TotalGrievanceBarChart = ({ emailData }) => {
+  // Count emails per category
+  const categoryCounts = {
+    'top-priority': 0,
+    'less-priority': 0,
+    'spam': 0
+  };
 
-const TotalGrievanceBarChart = () => (
-  <Card>
-    <CardContent>
-      <Grid container spacing={gridSpacing}>
-        <Grid item xs={12}>
-          <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
-            <Grid item xs zeroMinWidth>
-              <Grid container spacing={1}>
-                <Grid item xs={12}>
-                  <Skeleton variant="text" />
-                </Grid>
-                <Grid item xs={12}>
-                  <Skeleton variant="rectangular" height={20} />
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid item>
-              <Skeleton variant="rectangular" height={50} width={80} />
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid item xs={12}>
-          <Skeleton variant="rectangular" height={530} />
-        </Grid>
-      </Grid>
-    </CardContent>
-  </Card>
-);
+  emailData.forEach(email => {
+    const category = email.category;
+    if (categoryCounts[category] !== undefined) {
+      categoryCounts[category]++;
+    }
+  });
+
+  const chartData = {
+    labels: Object.keys(categoryCounts),
+    datasets: [
+      {
+        label: 'Email Count',
+        data: Object.values(categoryCounts),
+        backgroundColor: ['#1976d2', '#9c27b0', '#f44336'], // Blue, Purple, Red
+        borderWidth: 1
+      }
+    ]
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top'
+      },
+      title: {
+        display: true,
+        text: 'Email Category Distribution'
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          stepSize: 1
+        }
+      }
+    }
+  };
+
+  return (
+    <Card>
+      <CardContent>
+        <Typography variant="h6" gutterBottom>
+          Email Categories Overview
+        </Typography>
+        <Bar data={chartData} options={chartOptions} />
+      </CardContent>
+    </Card>
+  );
+};
 
 export default TotalGrievanceBarChart;

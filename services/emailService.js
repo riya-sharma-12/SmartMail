@@ -4,7 +4,7 @@ const Email = require('../models/email');
 const Reply = require('../models/reply');
 
 async function saveEmailToDB(emailData) {
-  const {
+  let {
     from_email,
     subject,
     body,
@@ -17,7 +17,14 @@ async function saveEmailToDB(emailData) {
 
   const resp_id = uuidv4();
   const org_id = '11111111-1111-1111-1111-111111111111';
-
+  
+  const emailMatch = from_email?.match(/<([^>]+)>/);
+  if (emailMatch && emailMatch[1]) {
+    from_email = emailMatch[1]; // Set to just the email address
+  } else {
+    // Case 2: Remove quotes if email does not have < >
+    from_email = from_email?.replace(/['"]+/g, '');
+  }
 
   try {
   await Email.create({

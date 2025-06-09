@@ -17,18 +17,17 @@ import BackDrop from 'views/utilities/BackDrop';
 const convetObjArray = (obj, data) => {
   try {
     if (!data) {
-      obj([])
+      obj([]);
     } else if (Array.isArray(data)) {
       obj(data);
     } else {
-      obj([data])
+      obj([data]);
     }
   } catch (err) {
     toast.error(`Getting Error -- ${err}`);
   }
 };
 const currentMonth = new Date().getMonth() + 1;
-
 
 const Dashboard = () => {
   const [isLoading, setLoading] = useState(true);
@@ -44,84 +43,131 @@ const Dashboard = () => {
   const [compsBarData, setCompsBarData] = useState(barInitialData);
   const [querysBarData, setQuerysBarData] = useState(barInitialData);
   const [resolvedGrieBarData, setResolvedGrieBarData] = useState(barInitialData);
+  const [allEmails, setAllEmails] = useState([]);
+
   //console.log(grievanceCurrYearMonthlyStats)
 
   const getDashboardData = async () => {
     try {
       setLoadingOverlay(true);
       const { data, error } = await CustomGetApi('/admin/getAllEmails');
-      console.log("dash-data", data)
+      console.log('dash-data', data);
       //console.log(data, error);
       if (!data) {
-        toast.error(`Failed!, ${error}`)
-      }
-      else {
+        toast.error(`Failed!, ${error}`);
+      } else {
         toast.success('All Stats Fetched Successfully.');
         //console.log(data);
         const grievanceData = data?.allGrievances;
-        const allEmailsStats = {}
+        setAllEmails(grievanceData);
+        const allEmailsStats = {};
         allEmailsStats.allMails = grievanceData?.length;
-        const repliedMails = grievanceData?.filter(item => item?.["email_status"] === 1).length;
+        const repliedMails = grievanceData?.filter((item) => item?.['email_status'] === 1).length;
+        let allMailsDayCount = 0;
+        
         const allMailsByMonth = new Array(12).fill(0); // Initialize 12 months with 0
         const allRepliedMailsByMonth = new Array(12).fill(0);
-        let allMailsByDay = [] // Initialize 12 months with 0
-        const allRepliedMailsByDay = [];
-        grievanceData?.forEach(item => {
-          const dateStr = item?.["email_created_at"];
+        let allMailsByDay = []; // Initialize 12 months with 0
+        let allRepliedMailsByDay = [];
+        grievanceData?.forEach((item) => {
+          const dateStr = item?.['email_created_at'];
           if (dateStr) {
             const date = new Date(dateStr);
             const month = date.getMonth(); // 0 = Jan, 11 = Dec
             allMailsByMonth[month]++;
           }
-          if(item?.["email_status"]===1){
-            const dateStr = "2025-06-03T05:16:26.000Z"; //item?.["email_replied_at"];
+          if (item?.['email_status'] === 1) {
+            const dateStr = item?.['email_replied_at'];
             const date = new Date(dateStr);
             const month = date.getMonth();
             allRepliedMailsByMonth[month]++;
           }
         });
 
-    const newGrivanceData = grievanceData;
-    const grouped = {};
-    const today = new Date();
-    const cutoffDate = new Date(today);
-    cutoffDate.setDate(today.getDate() - 11); // last 12 days including today
+        const newGrivanceData = grievanceData;
+        const grouped = {};
+        const today = new Date();
+        const cutoffDate = new Date(today);
+        cutoffDate.setDate(today.getDate() - 11); // last 12 days including today
 
-  newGrivanceData
-    ?.filter((email) => {
-      const emailDate = new Date(email["email_created_at"]);
-      return emailDate >= cutoffDate;
-    }).forEach((email) => {
-    const date = new Date(email["email_created_at"]).toISOString().split('T')[0];
-    if (grouped[date]) {
-      grouped[date]++;
+        newGrivanceData
+          ?.filter((email) => {
+            const emailDate = new Date(email['email_created_at']);
+            return emailDate >= cutoffDate;
+          })
+          .forEach((email) => {
+            const date = new Date(email['email_created_at']).toISOString().split('T')[0];
+            if (grouped[date]) {
+              grouped[date]++;
+            } else {
+              grouped[date] = 1;
+            }
+            allMailsDayCount++;
+          });
+
+   const repliedGrouped = {};
+let repliedMailsDayCount = 0; 
+newGrivanceData
+  ?.filter((email) => {
+        if (email?.['email_status'] !== 1) return false;
+    const replyDateStr = email['email_replied_at'];
+    if (!replyDateStr) return false; // skip if null/undefined
+    const replyDate = new Date(replyDateStr);
+    return !isNaN(replyDate) && replyDate >= cutoffDate;
+  })
+  .forEach((email) => {
+    const replyDateStr = email['email_replied_at'];
+    const date = new Date(replyDateStr).toISOString().split('T')[0];
+
+    if (repliedGrouped[date]) {
+      repliedGrouped[date]++;
     } else {
-      grouped[date] = 1;
+      repliedGrouped[date] = 1;
     }
+    repliedMailsDayCount++;
   });
 
-    
-  // Convert to array if needed
-        allMailsByDay = Object.entries(grouped).map(([date, count]) => ({ date, count }));
-        console.log("--allMailsByMonth--", allMailsByDay)
+        
+        allMailsByDay = Object.entries(grouped)
+          .filter(([date]) => {
+            const isValid = !isNaN(new Date(date).getTime());
+            if (!isValid) console.warn('Invalid date in grouped object:', date);
+            return isValid;
+          })
+          .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB))
+          .map(([date, count]) => ({ date, count }));
+        console.log('--allMailsByDay--', allMailsByDay);
+        
+        allRepliedMailsByDay = Object.entries(repliedGrouped)
+          .filter(([date]) => {
+            const isValid = !isNaN(new Date(date).getTime());
+            if (!isValid) console.warn('Invalid date in grouped object:', date);
+            return isValid;
+          })
+          .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB))
+          .map(([date, count]) => ({ date, count }));
+
+        console.log('allRepliedMailsByDay', allRepliedMailsByDay);
         allEmailsStats.allMailsByMonth = allMailsByMonth;
         allEmailsStats.allRepliedMailsByMonth = allRepliedMailsByMonth;
         allEmailsStats.allMailsByDay = allMailsByDay;
         allEmailsStats.allRepliedMailsByDay = allRepliedMailsByDay;
         allEmailsStats.repliedMails = repliedMails;
+        allEmailsStats.allMailsDayCount = allMailsDayCount;
+        allEmailsStats.repliedMailsDayCount = repliedMailsDayCount;
         const grievanceStatsData = grievanceData?.grievanceStats;
         const grievanceYearlyStatsData = grievanceData?.grievanceYearlyStats;
         const grievanceCurrYearMonthlyStatsData = grievanceData?.grievanceCurrYearMonthlyStats;
         convetObjArray(setGrievanceStats, grievanceStatsData);
         convetObjArray(setGrievanceYearlyStats, grievanceYearlyStatsData);
-        setAllMailsStats(allEmailsStats)
+        setAllMailsStats(allEmailsStats);
         //convetObjArray(setGrievanceCurrYearMonthlyStats, grievanceCurrYearMonthlyStatsData);
         grievanceYearlyStatsData.map((item) => {
           //console.log(item,currentMonth, "check");
           if (item?.month == currentMonth) {
-            setCurrentYearGrie(item)
+            setCurrentYearGrie(item);
           } else {
-            setPreviousYearGrie(item)
+            setPreviousYearGrie(item);
           }
         });
         let grieBarInitialData = [...griesBarData];
@@ -138,7 +184,7 @@ const Dashboard = () => {
           setQuerysBarData(querysBarInitialData);
           resolvedGrieBarInitialData[month] = item.grievance_resolved;
           setResolvedGrieBarData(resolvedGrieBarInitialData);
-        })
+        });
       }
     } catch (err) {
       //console.log("catch error", err)
@@ -156,15 +202,30 @@ const Dashboard = () => {
   return (
     <Grid container spacing={gridSpacing}>
       {isLoadingOverlay && <BackDrop isLoading={isLoadingOverlay} />}
-      <Toaster position='top-center' reverseOrder={false}></Toaster>
+      <Toaster position="top-center" reverseOrder={false}></Toaster>
       <Grid item xs={12}>
         <Grid container spacing={gridSpacing}>
           <Grid item lg={4} md={6} sm={6} xs={12}>
             {/* <EarningCard isLoading={isLoading} grievanceStats={grievanceStats} /> */}
-            <TotalEmailLineChartCard isLoading={isLoading} title={"Mails Stats By Month"} grievanceComplains={allEmailsStats?.allMails} grievanceQuerys={allEmailsStats?.repliedMails} allMailsData={allEmailsStats?.allMailsByMonth} allRepliedMails={allEmailsStats?.allRepliedMailsByMonth}/>
+
+            <TotalEmailLineChartCard
+              isLoading={isLoading}
+              title={'Mails Stats By Month'}
+              grievanceComplains={allEmailsStats?.allMails}
+              grievanceQuerys={allEmailsStats?.repliedMails}
+              allMailsData={allEmailsStats?.allMailsByMonth}
+              allRepliedMails={allEmailsStats?.allRepliedMailsByMonth}
+            />
           </Grid>
           <Grid item lg={4} md={6} sm={6} xs={12}>
-            <TotalEmailLineChartCard isLoading={isLoading} title={"Mails Stats By Day"} grievanceComplains={allEmailsStats?.allMails} grievanceQuerys={allEmailsStats?.repliedMails} allMailsData={allEmailsStats?.allMailsByDay} allRepliedMails={allEmailsStats?.allRepliedMailsByDay}/>
+            <TotalEmailLineChartCard
+              isLoading={isLoading}
+              title={'Mails Stats By Day'}
+              grievanceComplains={allEmailsStats?.allMailsDayCount}
+              grievanceQuerys={allEmailsStats?.repliedMailsDayCount}
+              allMailsData={allEmailsStats?.allMailsByDay}
+              allRepliedMails={allEmailsStats?.allRepliedMailsByDay}
+            />
           </Grid>
           <Grid item lg={4} md={12} sm={12} xs={12}>
             <Grid container spacing={gridSpacing}>
@@ -181,7 +242,7 @@ const Dashboard = () => {
       <Grid item xs={12}>
         <Grid container spacing={gridSpacing}>
           <Grid item xs={12} md={8}>
-            <TotalGrievanceBarChart isLoading={isLoading} griesBarData={griesBarData} compsBarData={compsBarData} querysBarData={querysBarData} resolvedGrieBarData={resolvedGrieBarData} />
+            <TotalGrievanceBarChart emailData={allEmails} />
           </Grid>
         </Grid>
       </Grid>

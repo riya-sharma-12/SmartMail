@@ -68,22 +68,31 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 const TotalOrderLineChartCard = ({ isLoading, title, grievanceComplains, grievanceQuerys, allMailsData, allRepliedMails}) => {
   const theme = useTheme();
-  let xAxisArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  console.log("title", title, allMailsData)
+  let xAxisArrayOfMails = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  let xAxisArrayOfReplied = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  console.log("title---check", title, allMailsData, allRepliedMails)
   let allMailsByDay = [];
+  let repliedMailsByDay = []
   if(title==="Mails Stats By Day"){
     console.log("inside if")
-    xAxisArray = [];
+    xAxisArrayOfMails = [];
+    xAxisArrayOfReplied = []; 
     console.log("allMailsData", allMailsData)
     allMailsData?.map((item,index)=>{
       console.log("date", item)
-      xAxisArray.push(item["date"])
+      xAxisArrayOfMails.push(item["date"])
       allMailsByDay.push(item["count"])
     })
     allMailsData = allMailsByDay;
+    allRepliedMails?.map((item)=>{
+      console.log("date", item)
+      xAxisArrayOfReplied.push(item["date"])
+      repliedMailsByDay.push(item["count"])
+    })
+    allRepliedMails = repliedMailsByDay;
   };
   
-   console.log("inside if2", xAxisArray, allMailsData)
+   //console.log("inside if2", xAxisArray, allMailsData)
   const [timeValue, setTimeValue] = useState(false);
   const handleChangeTime = (event, newValue) => {
     setTimeValue(newValue);
@@ -171,7 +180,7 @@ const TotalOrderLineChartCard = ({ isLoading, title, grievanceComplains, grievan
                   </Grid>
                   <Grid item xs={6}>
                     {/* <Chart {...ChartDataYear} /> */}
-                    {timeValue ? <Chart {...CustomChartData('Number of Mails', 'Mails per Month', xAxisArray, allMailsData)} /> : <Chart {...CustomChartData('Number of Replied Mails', 'Replied Mails per Month', xAxisArray, allRepliedMails)}/>}
+                    {timeValue ? <Chart {...CustomChartData('Number of Mails', 'Mails per Month', xAxisArrayOfMails, allMailsData)} /> : <Chart {...CustomChartData('Number of Replied Mails', 'Replied Mails per Month', xAxisArrayOfReplied, allRepliedMails)}/>}
                   </Grid>
                 </Grid>
               </Grid>

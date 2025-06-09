@@ -49,7 +49,6 @@ const sendReplyEmail = async (req, res) => {
         pass: process.env.EMAIL_PASS
       }
     });
-
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: fromEmail,//originalEmail.from_email,
@@ -60,7 +59,9 @@ const sendReplyEmail = async (req, res) => {
     };
 
     const info = await transporter.sendMail(mailOptions);
-
+    email.status = 1;
+    if(info?.messageId) email.email_message_id=info?.messageId;
+    await email.save();
     return res.status(200).json({
       message: 'Reply sent successfully.',
       messageId: info.messageId,
