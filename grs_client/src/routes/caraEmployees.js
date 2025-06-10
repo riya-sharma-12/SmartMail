@@ -9,7 +9,7 @@ import MainLayout from 'layout/MainLayout';
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
 const ResolvedGrievancesView = Loadable(lazy(() => import('views/caraEmployeeViews/grievancesReports/resolvedGrievancesView')));
 const UnResolvedGrievancesView = Loadable(lazy(() => import('views/caraEmployeeViews/grievancesReports/unresolvedGrievancesView')));
-const ClosedGrievancesView = Loadable(lazy(() => import('views/caraEmployeeViews/grievancesReports/closedGrievancesView')));
+// const ClosedGrievancesView = Loadable(lazy(() => import('views/caraEmployeeViews/grievancesReports/closedGrievancesView')));
 
 const PdfViewer = Loadable(lazy(() => import('views/common/PdfViewer')));
 // ==============================|| Cara Super-Admin ROUTING ||============================== //
@@ -35,10 +35,10 @@ const caraEmployeesRoutes = {
             path: '/reports/unresolvedgrievanes',
             element: <UnResolvedGrievancesView />
         },
-        {
-            path: '/reports/unread-emails',
-            element: <ClosedGrievancesView />
-        },
+        // {
+        //     path: '/reports/unread-emails',
+        //     element: <ClosedGrievancesView />
+        // },
         {
             path: '/pdf/:filename',
             element: <PdfViewer />

@@ -84,7 +84,7 @@ const TotalGrievanceBarChart = ({ emailData }) => {
   return (
     <Card
       sx={{
-        height: 600, // Increased height for more vertical length
+        height: 500, // Increased height for more vertical length
         width: '100%',
         borderRadius: 2,
         boxShadow: '0 2px 6px rgba(0,0,0,0.1)',

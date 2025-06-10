@@ -1,5 +1,9 @@
 const { Email, Reply } = require('../models/index');
 const { Op } = require('sequelize');
+const { default: ollama } = require('ollama');
+const { response } = require('express');
+const { tr } = require('date-fns/locale');
+const modelName = 'llama3.2';
 const getAllEmails = async (req, res) => {
   try {
     const emails = await Email.findAll({
@@ -75,4 +79,21 @@ const getAllEmailsBySubjs = async (req, res) => {
   }
 };
 
-module.exports = { getAllEmails, getAllEmailsBySubjs };
+const botChat = async (req, res) => {
+  try{
+  const {userPrompt} = req.body;
+  const stream = await ollama.generate({ model: modelName, prompt:userPrompt, stream: true });
+  let reply = '';
+  // console.log("chucking")
+  for await (const chunk of stream){ 
+    //res.write(chunk.response)
+    reply += chunk.response;
+  }
+  return res.status(200).json({ msg: 'Bot Responce', success:true, response: reply });
+  }catch (error) {
+    console.error('Error in botChat:', error);
+    res.status(500).json({ error: 'Failed to Generate Response.' });
+  }
+}
+
+module.exports = { getAllEmails, getAllEmailsBySubjs, botChat };

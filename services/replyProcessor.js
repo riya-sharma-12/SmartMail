@@ -16,6 +16,7 @@ async function processReplies(batchSize = 5) {
     received_at: {
       [Op.between]: [todayStart, todayEnd],
     },
+    category: 'top-priority' 
   },
   include: [{
     model: Reply,

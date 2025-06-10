@@ -16,16 +16,6 @@ const ClosedGrievancesView = () => {
 
     const columns = [
         { field: 'from_email', headerName: 'Email From', width: 150 },
-        // {
-        //     field: 'grievance_dept_code', // Assuming 'action' is the field for the selector column
-        //     headerName: 'Take Action',
-        //     width: 200,
-        //     renderCell: (params) => (
-        //         params.value ? <strong>
-        //             {caraDepts.find((dept) => dept.dept_id === params.value)?.dept_name}
-        //         </strong> : "Not-Avilable"
-        //     ),
-        // },
         { field: 'email-subject', headerName: 'Subject', width: 200 },
         { field: 'email-body', headerName: 'Body', width: 200 },
         { field: 'email-category', headerName: 'Categories', width: 200 },

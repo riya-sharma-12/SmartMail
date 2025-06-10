@@ -39,13 +39,13 @@ const caraEmployees = {
                   url: '/reports/unresolvedgrievanes',
                   breadcrumbs: false
               },
-                {
-                    id: 'unread-emails',
-                    title: 'Unread Emails',
-                    type: 'item',
-                    url: '/reports/unread-emails',
-                    breadcrumbs: false
-                }
+                // {
+                //     id: 'unread-emails',
+                //     title: 'Unread Emails',
+                //     type: 'item',
+                //     url: '/reports/unread-emails',
+                //     breadcrumbs: false
+                // }
             ]
         }
     ]

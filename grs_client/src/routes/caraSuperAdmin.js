@@ -12,11 +12,11 @@ const ViewAllCaraUsers = Loadable(lazy(() => import('views/caraSuperAdminViews/v
 const RegisterGrievance = Loadable(lazy(() => import('views/caraSuperAdminViews/registerGrievance')));
 // grievances reports
 const AllGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/allEmails')));
-const DistGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/distGrievancesView')));
+const DistGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/topPriorityMails')));
 const RepliedEmailsView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/repliedEmailView')));
 const PushedbackGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/pushedbackGrievancesView')));
 const ResolvedGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/resolvedGrievancesView')));
-const ClosedGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/closedGrievancesView')));
+// const ClosedGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/closedGrievancesView')));
 // ==============================|| Cara Super-Admin ROUTING ||============================== //
 
 const caraSuperAdminRoutes = {
@@ -63,10 +63,10 @@ const caraSuperAdminRoutes = {
             path: '/reports/new-emails',
             element: <ResolvedGrievancesView />
         },
-        {
-            path: '/reports/unread-emails',
-            element: <ClosedGrievancesView />
-        }
+        // {
+        //     path: '/reports/unread-emails',
+        //     element: <ClosedGrievancesView />
+        // }
     ]
 };
 

@@ -2,7 +2,7 @@
 
 
 
-const CustomChartData = (title, seriesName, categories, data) => {
+const CustomChartData = (title, xAxisLabel, seriesName, categories, data) => {
     console.log("check --", title, categories, data)
     return {
         type: 'line',
@@ -28,7 +28,7 @@ const CustomChartData = (title, seriesName, categories, data) => {
     xaxis: {
       categories: categories, // Add more months as needed
       title: {
-        text: 'Month'
+        text: xAxisLabel
       },
       labels: {
         style: {

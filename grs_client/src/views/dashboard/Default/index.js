@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Grid } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import { CustomGetApi } from 'api';
 import { Toaster, toast } from 'react-hot-toast';
 // project imports
@@ -11,6 +11,8 @@ import TotalIncomeLightCard from './TotalIncomeLightCard';
 import TotalGrievanceBarChart from './TotalGrievanceBarChart';
 import { gridSpacing } from 'store/constant';
 import BackDrop from 'views/utilities/BackDrop';
+import ChatBotCard from './chart-data/chatBotCard'; // Adjust path if needed grs_client\src\views\dashboard\Default\chart-data\chatBotCard.js
+import { maxHeight } from '@mui/system';
 
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
@@ -200,53 +202,112 @@ newGrivanceData
   }, []);
 
   return (
-    <Grid container spacing={gridSpacing}>
-      {isLoadingOverlay && <BackDrop isLoading={isLoadingOverlay} />}
-      <Toaster position="top-center" reverseOrder={false}></Toaster>
-      <Grid item xs={12}>
-        <Grid container spacing={gridSpacing}>
-          <Grid item lg={4} md={6} sm={6} xs={12}>
-            {/* <EarningCard isLoading={isLoading} grievanceStats={grievanceStats} /> */}
+//     <Grid container spacing={gridSpacing}>
+//       {isLoadingOverlay && <BackDrop isLoading={isLoadingOverlay} />}
+//       <Toaster position="top-center" reverseOrder={false}></Toaster>
+//       <Grid item xs={12}>
+//         <Grid container spacing={gridSpacing}>
+//           <Grid item lg={4} md={6} sm={6} xs={12}>
+//             {/* <EarningCard isLoading={isLoading} grievanceStats={grievanceStats} /> */}
 
-            <TotalEmailLineChartCard
-              isLoading={isLoading}
-              title={'Mails Stats By Month'}
-              grievanceComplains={allEmailsStats?.allMails}
-              grievanceQuerys={allEmailsStats?.repliedMails}
-              allMailsData={allEmailsStats?.allMailsByMonth}
-              allRepliedMails={allEmailsStats?.allRepliedMailsByMonth}
-            />
-          </Grid>
-          <Grid item lg={4} md={6} sm={6} xs={12}>
-            <TotalEmailLineChartCard
-              isLoading={isLoading}
-              title={'Mails Stats By Day'}
-              grievanceComplains={allEmailsStats?.allMailsDayCount}
-              grievanceQuerys={allEmailsStats?.repliedMailsDayCount}
-              allMailsData={allEmailsStats?.allMailsByDay}
-              allRepliedMails={allEmailsStats?.allRepliedMailsByDay}
-            />
-          </Grid>
-          <Grid item lg={4} md={12} sm={12} xs={12}>
-            <Grid container spacing={gridSpacing}>
-              <Grid item sm={6} xs={12} md={6} lg={12}>
-                <TotalIncomeDarkCard isLoading={isLoading} allEmailsStats={allEmailsStats} />
-              </Grid>
-              <Grid item sm={6} xs={12} md={6} lg={12}>
-                <TotalIncomeLightCard isLoading={isLoading} allEmailsStats={allEmailsStats} />
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
+//             <TotalEmailLineChartCard
+//               isLoading={isLoading}
+//               title={'Stats By Month'}
+//               grievanceComplains={allEmailsStats?.allMails}
+//               grievanceQuerys={allEmailsStats?.repliedMails}
+//               allMailsData={allEmailsStats?.allMailsByMonth}
+//               allRepliedMails={allEmailsStats?.allRepliedMailsByMonth}
+//             />
+//           </Grid>
+//           <Grid item lg={4} md={6} sm={6} xs={12}>
+//             <TotalEmailLineChartCard
+//               isLoading={isLoading}
+//               title={'Stats By Day (last 12 days)'}
+//               grievanceComplains={allEmailsStats?.allMailsDayCount}
+//               grievanceQuerys={allEmailsStats?.repliedMailsDayCount}
+//               allMailsData={allEmailsStats?.allMailsByDay}
+//               allRepliedMails={allEmailsStats?.allRepliedMailsByDay}
+//             />
+//           </Grid>
+//           <Grid item lg={4} md={12} sm={12} xs={12}>
+//             <Grid container spacing={gridSpacing}>
+//               <Grid item sm={6} xs={12} md={6} lg={12}>
+//   <TotalIncomeDarkCard isLoading={isLoading} allEmailsStats={allEmailsStats} />
+// </Grid>
+// <Grid item sm={6} xs={12} md={6} lg={12}>
+//   <TotalIncomeLightCard isLoading={isLoading} allEmailsStats={allEmailsStats} />
+// </Grid>
+//   <Grid item xs={12}>   {/* or use sm/md/lg as needed */}
+//   </Grid>
+//             </Grid>
+//               <ChatBotCard/>
+//           </Grid>
+//         </Grid>
+//       </Grid>
+//       <Grid item xs={12}>
+//         <Grid container spacing={gridSpacing}>
+//           <Grid item xs={12} md={8}>
+//             <TotalGrievanceBarChart emailData={allEmails} />
+//           </Grid>
+//         </Grid>
+//       </Grid>
+//     </Grid>
+
+
+<Grid container spacing={gridSpacing}>
+  {isLoadingOverlay && <BackDrop isLoading={isLoadingOverlay} />}
+  <Toaster position="top-center" reverseOrder={false} />
+
+  {/* Left Side: Col 1 and 2 (8 columns total) */}
+  <Grid item lg={8} md={12} xs={12}>
+    <Grid container spacing={gridSpacing}>
+      {/* Row 1 - Two Line Chart Cards */}
+      <Grid item xs={12} md={6}>
+        <TotalEmailLineChartCard
+          isLoading={isLoading}
+          title="Stats By Month"
+          grievanceComplains={allEmailsStats?.allMails}
+          grievanceQuerys={allEmailsStats?.repliedMails}
+          allMailsData={allEmailsStats?.allMailsByMonth}
+          allRepliedMails={allEmailsStats?.allRepliedMailsByMonth}
+        />
       </Grid>
+
+      <Grid item xs={12} md={6}>
+        <TotalEmailLineChartCard
+          isLoading={isLoading}
+          title="Stats By Day (last 12 days)"
+          grievanceComplains={allEmailsStats?.allMailsDayCount}
+          grievanceQuerys={allEmailsStats?.repliedMailsDayCount}
+          allMailsData={allEmailsStats?.allMailsByDay}
+          allRepliedMails={allEmailsStats?.allRepliedMailsByDay}
+        />
+      </Grid>
+
+      {/* Row 2 - Bar Chart */}
       <Grid item xs={12}>
-        <Grid container spacing={gridSpacing}>
-          <Grid item xs={12} md={8}>
-            <TotalGrievanceBarChart emailData={allEmails} />
-          </Grid>
-        </Grid>
+        <TotalGrievanceBarChart emailData={allEmails} />
       </Grid>
     </Grid>
+  </Grid>
+
+  {/* Right Side: Col 3 (4 columns) spans both rows visually */}
+  <Grid item lg={4} md={12} xs={12}>
+    <Grid container spacing={gridSpacing} direction="column">
+      <Grid item>
+        <TotalIncomeDarkCard isLoading={isLoading} allEmailsStats={allEmailsStats} />
+      </Grid>
+      <Grid item>
+        <TotalIncomeLightCard isLoading={isLoading} allEmailsStats={allEmailsStats} />
+      </Grid>
+      <Grid item>
+        <ChatBotCard />
+      </Grid>
+    </Grid>
+  </Grid>
+</Grid>
+
+
   );
 };
 

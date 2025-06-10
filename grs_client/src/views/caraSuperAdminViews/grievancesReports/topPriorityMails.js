@@ -149,11 +149,7 @@ const AllGrievancesView = () => {
       if (!data) toast.error(`Failed! ${error}`);
       else {
         toast.success(`Success! ${data?.msg}`);
-        const filtered = (data?.allGrievances || []).filter(
-  (email) => email.llm_reply !== null && email.llm_reply !== ''
-);
-setAllGrievances(filtered);
-
+        setAllGrievances(data?.allGrievances || []);
       }
     } catch (err) {
       toast.error(`Something Went Wrong! ${err}`);
@@ -264,14 +260,13 @@ const handleSubmitReply = async () => {
       <Grid item xs={12}>
         <Grid container justifyContent="center" sx={{ mb: 2 }}>
           <Typography variant="h2">
-            <u>View Drafted Emails</u>
+            <u>View Top Priority Emails</u>
           </Typography>
         </Grid>
       </Grid>
 
       <Grid item xs={12}>
-        <DataGrid
-          rows={allGrievances}
+        <DataGrid rows={allGrievances.filter((item) => item['email-category'] === 'top-priority')}
           columns={columns}
           getRowId={(row) => row.email_token}
           initialState={{

@@ -34,31 +34,117 @@ const AllGrievancesView = () => {
       }
     },
     {
-      field: 'email-subject',
-      type: 'string',
-      headerName: 'Subject',
-      width: 200,
-      valueFormatter: (params) => params.value?.replace(/^[“"]|[”"]$/g, '') || ''
-    },
-    { field: 'email-body', headerName: 'Body', width: 200 },
-    { field: 'email-category', headerName: 'Categories', width: 200 },
+  field: 'email-subject',
+  headerName: 'Subject',
+  width: 200,
+
+  // Custom sort comparator to remove quotes before comparison
+  sortComparator: (v1, v2) => {
+    const clean = (val) =>
+      (val || '').replace(/^[“"']|[”"']$/g, '').toLowerCase();
+
+    return clean(v1).localeCompare(clean(v2));
+  }
+},
+{
+  field: 'email-body',
+  headerName: 'Body',
+  width: 200,
+
+  // ✅ Show the original unmodified value — NO valueFormatter
+
+  // ✅ Sort using cleaned value (remove leading non-alphanumerics)
+  sortComparator: (v1, v2) => {
+    const clean = (val) =>
+      (val || '').replace(/^[^a-zA-Z0-9]+/, '').trim().toLowerCase();
+
+    return clean(v1).localeCompare(clean(v2));
+  }
+},
+{
+  field: 'email-category',
+  headerName: 'Categories',
+  width: 135,
+  valueFormatter: (params) => {
+    const value = params.value;
+    if (value === 'top-priority') return 'Top Priority';
+    if (value === 'less-priority') return 'Less Priority';
+    if (value === 'spam') return 'Spam Mail';
+    return value; // default fallback
+  }
+},
     {
       field: 'email_status',
       headerName: 'Status',
-      width: 200,
-      valueGetter: (params) => (params.row.email_status === 0 ? 'No' : 'Yes')
+      width: 135,
+      valueGetter: (params) => (params.row.email_status === 0 ? 'Not Replied' : 'Reply Sent')
     },
-    { field: 'email_created_at', headerName: 'Created At', type:'date', width: 200, valueFormatter: (params) => {
+    { field: 'email_created_at', headerName: 'Created At', type:'date', width: 135, valueFormatter: (params) => {
         return new Date(params.value).toLocaleDateString();
       } },
-     { field: 'email_received_at', headerName: 'Received At', type:'date', width: 200, valueFormatter: (params) => {
+     { field: 'email_received_at', headerName: 'Received At', type:'date', width: 135, valueFormatter: (params) => {
         return new Date(params.value).toLocaleDateString();
       } },
-    { field: 'llm_reply', headerName: 'LLM Reply', width: 200 },
+//   {
+//   field: 'llm_reply',
+//   headerName: 'LLM Reply',
+//   width: 200,
+//   // sortingOrder: ['asc', 'desc'], // Optional, but helps toggle both directions
+//   sortComparator: (v1, v2) => {
+//     const clean = (val) =>
+//       (val || '')
+//         .toString()
+//         .trim()
+//         .replace(/^[^a-zA-Z0-9]+/, '')
+//         .toLowerCase();
+
+//     const a = clean(v1);
+//     const b = clean(v2);
+
+//     // Null or empty values should always come LAST (bottom), regardless of direction
+//     const isEmpty = (str) => !str || str.length === 0;
+
+//     if (isEmpty(a) && !isEmpty(b)) return 1;
+//     if (!isEmpty(a) && isEmpty(b)) return -1;
+//     if (isEmpty(a) && isEmpty(b)) return 0;
+
+//     return a.localeCompare(b);
+//   }
+// }
+{
+  field: 'llm_reply',
+  headerName: 'LLM Reply',
+  width: 200,
+  type: 'string',
+  valueGetter: (params) => {
+    const raw = (params.value ?? '').toString().trim();
+    const cleaned = raw.replace(/^[^a-zA-Z0-9]+/, '');
+    return cleaned.length === 0 ? 'NA' : cleaned;
+  },
+  sortComparator: (v1, v2) => {
+    const clean = (val) =>
+      (val ?? '').toString().replace(/^[^a-zA-Z0-9]+/, '').trim().toLowerCase();
+
+    return clean(v1).localeCompare(clean(v2));
+  },
+}
+
+,
     {
       field: 'final_reply',
       headerName: 'Final Reply',
       width: 200,
+      valueGetter: (params) => {
+    const raw = (params.value ?? '').toString().trim();
+    const cleaned = raw.replace(/^[^a-zA-Z0-9]+/, '');
+    return cleaned.length === 0 ? 'NA' : cleaned;
+  },
+  sortComparator: (v1, v2) => {
+    const clean = (val) =>
+      (val ?? '').toString().replace(/^[^a-zA-Z0-9]+/, '').trim().toLowerCase();
+
+    return clean(v1).localeCompare(clean(v2));
+  },
       renderCell: (params) => (
         <div
           onDoubleClick={() => {
@@ -76,7 +162,7 @@ const AllGrievancesView = () => {
   field: 'email_replied_at',
   headerName: 'Reply Generated At',
   type: 'date',
-  width: 200,
+  width: 135,
   valueFormatter: (params) => {
     const value = params?.value;
     return value ? new Date(value).toLocaleDateString() : '';

@@ -61,16 +61,16 @@ const caraAdmin = {
                     url: '/reports/new-emails',
                     breadcrumbs: false
                 },
-                {
-                    id: 'unread-emails',
-                    title: 'Unread Emails',
-                    type: 'item',
-                    url: '/reports/unread-emails',
-                    breadcrumbs: false
-                },
+                // {
+                //     id: 'unread-emails',
+                //     title: 'Unread Emails',
+                //     type: 'item',
+                //     url: '/reports/unread-emails',
+                //     breadcrumbs: false
+                // },
                 {
                     id: 'replied-emails',
-                    title: 'Replied Emails',
+                    title: 'Drafted Emails',
                     type: 'item',
                     url: '/reports/replied-emails',
                     breadcrumbs: false
