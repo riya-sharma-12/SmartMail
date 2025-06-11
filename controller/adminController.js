@@ -79,69 +79,6 @@ const getAllEmailsBySubjs = async (req, res) => {
   }
 };
 
-
-
-// const getAllEmailsBySubjs = async (req, res) => {
-//   try {
-//     const { emailSubject } = req.body;
-
-//     if (!emailSubject) {
-//       return res.status(400).json({ msg: 'Search term is missing!', success: false });
-//     }
-
-//     const searchPattern = `%${emailSubject}%`;
-
-//     const emails = await Email.findAll({
-//       include: [{
-//         model: Reply,
-//         required: false,
-//         where: {
-//           [Op.or]: [
-//             { llm_reply: { [Op.iLike]: searchPattern } },
-//             { final_reply: { [Op.iLike]: searchPattern } }
-//           ]
-//         }
-//       }],
-//       where: {
-//         [Op.or]: [
-//           { subject: { [Op.iLike]: searchPattern } },
-//           { body: { [Op.iLike]: searchPattern } },
-//           { category: { [Op.iLike]: searchPattern } },
-//           { from_email: { [Op.iLike]: searchPattern } }
-//         ]
-//       },
-//       order: [['received_at', 'DESC']]
-//     });
-
-//     const formatted = emails.map(email => {
-//       const reply = email.Reply || {};
-//       return {
-//         id: email.resp_id,
-//         email_token: email.resp_id,
-//         from_email: email.from_email,
-//         'email-subject': email.subject,
-//         'email-body': email.body,
-//         'email-category': email.category,
-//         email_status: email.status,
-//         email_created_at: email.created_at,
-//         email_received_at: email.received_at,
-//         llm_reply: reply.llm_reply || '',
-//         final_reply: reply.final_reply || '',
-//         email_replied_at: reply.replied_at || ''
-//       };
-//     });
-
-//     return res.status(200).json({
-//       success: true,
-//       msg: 'Search successful!',
-//       emails: formatted
-//     });
-
-//   } catch (err) {
-//     console.error(err);
-//     return res.status(500).json({ msg: 'Server error', success: false });
-//   }
-// };
 const botChat = async (req, res) => {
   try{
   const {userPrompt} = req.body;
