@@ -65,8 +65,24 @@ const Dashboard = () => {
         const allEmailsStats = {};
         allEmailsStats.allMails = grievanceData?.length;
         const repliedMails = grievanceData?.filter((item) => item?.['email_status'] === 1).length;
+        // Count replied mails with LLM reply not equal to 'NA'
+        let llmRepliedMails = 0;
+//         const llmRepliedMails = grievanceData?.filter(
+//           (item) =>
+//             item?.replies?.length > 0 &&
+//             item.replies.some((reply) => reply?.llm_reply && reply.llm_reply !== 'NA')
+//         ).length;
+// console.log('llmRepliedMails Count:', llmRepliedMails);
+grievanceData?.forEach((item) => {
+  if (item?.llm_reply && item.llm_reply !== 'NA') {
+    llmRepliedMails++;
+  }
+});
+
+console.log('llmRepliedMails Count:', llmRepliedMails);
+
         let allMailsDayCount = 0;
-        
+
         const allMailsByMonth = new Array(12).fill(0); // Initialize 12 months with 0
         const allRepliedMailsByMonth = new Array(12).fill(0);
         let allMailsByDay = []; // Initialize 12 months with 0
@@ -90,7 +106,7 @@ const Dashboard = () => {
         const grouped = {};
         const today = new Date();
         const cutoffDate = new Date(today);
-        cutoffDate.setDate(today.getDate() - 11); // last 12 days including today
+        cutoffDate.setDate(today.getDate() - 13); // last 12 days including today
 
         newGrivanceData
           ?.filter((email) => {
@@ -107,29 +123,28 @@ const Dashboard = () => {
             allMailsDayCount++;
           });
 
-   const repliedGrouped = {};
-let repliedMailsDayCount = 0; 
-newGrivanceData
-  ?.filter((email) => {
-        if (email?.['email_status'] !== 1) return false;
-    const replyDateStr = email['email_replied_at'];
-    if (!replyDateStr) return false; // skip if null/undefined
-    const replyDate = new Date(replyDateStr);
-    return !isNaN(replyDate) && replyDate >= cutoffDate;
-  })
-  .forEach((email) => {
-    const replyDateStr = email['email_replied_at'];
-    const date = new Date(replyDateStr).toISOString().split('T')[0];
+        const repliedGrouped = {};
+        let repliedMailsDayCount = 0;
+        newGrivanceData
+          ?.filter((email) => {
+            if (email?.['email_status'] !== 1) return false;
+            const replyDateStr = email['email_replied_at'];
+            if (!replyDateStr) return false; // skip if null/undefined
+            const replyDate = new Date(replyDateStr);
+            return !isNaN(replyDate) && replyDate >= cutoffDate;
+          })
+          .forEach((email) => {
+            const replyDateStr = email['email_replied_at'];
+            const date = new Date(replyDateStr).toISOString().split('T')[0];
 
-    if (repliedGrouped[date]) {
-      repliedGrouped[date]++;
-    } else {
-      repliedGrouped[date] = 1;
-    }
-    repliedMailsDayCount++;
-  });
+            if (repliedGrouped[date]) {
+              repliedGrouped[date]++;
+            } else {
+              repliedGrouped[date] = 1;
+            }
+            repliedMailsDayCount++;
+          });
 
-        
         allMailsByDay = Object.entries(grouped)
           .filter(([date]) => {
             const isValid = !isNaN(new Date(date).getTime());
@@ -139,7 +154,7 @@ newGrivanceData
           .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB))
           .map(([date, count]) => ({ date, count }));
         console.log('--allMailsByDay--', allMailsByDay);
-        
+
         allRepliedMailsByDay = Object.entries(repliedGrouped)
           .filter(([date]) => {
             const isValid = !isNaN(new Date(date).getTime());
@@ -156,6 +171,7 @@ newGrivanceData
         allEmailsStats.allRepliedMailsByDay = allRepliedMailsByDay;
         allEmailsStats.repliedMails = repliedMails;
         allEmailsStats.allMailsDayCount = allMailsDayCount;
+        allEmailsStats.llmRepliedMails = llmRepliedMails;
         allEmailsStats.repliedMailsDayCount = repliedMailsDayCount;
         const grievanceStatsData = grievanceData?.grievanceStats;
         const grievanceYearlyStatsData = grievanceData?.grievanceYearlyStats;
@@ -202,112 +218,109 @@ newGrivanceData
   }, []);
 
   return (
-//     <Grid container spacing={gridSpacing}>
-//       {isLoadingOverlay && <BackDrop isLoading={isLoadingOverlay} />}
-//       <Toaster position="top-center" reverseOrder={false}></Toaster>
-//       <Grid item xs={12}>
-//         <Grid container spacing={gridSpacing}>
-//           <Grid item lg={4} md={6} sm={6} xs={12}>
-//             {/* <EarningCard isLoading={isLoading} grievanceStats={grievanceStats} /> */}
+    //     <Grid container spacing={gridSpacing}>
+    //       {isLoadingOverlay && <BackDrop isLoading={isLoadingOverlay} />}
+    //       <Toaster position="top-center" reverseOrder={false}></Toaster>
+    //       <Grid item xs={12}>
+    //         <Grid container spacing={gridSpacing}>
+    //           <Grid item lg={4} md={6} sm={6} xs={12}>
+    //             {/* <EarningCard isLoading={isLoading} grievanceStats={grievanceStats} /> */}
 
-//             <TotalEmailLineChartCard
-//               isLoading={isLoading}
-//               title={'Stats By Month'}
-//               grievanceComplains={allEmailsStats?.allMails}
-//               grievanceQuerys={allEmailsStats?.repliedMails}
-//               allMailsData={allEmailsStats?.allMailsByMonth}
-//               allRepliedMails={allEmailsStats?.allRepliedMailsByMonth}
-//             />
-//           </Grid>
-//           <Grid item lg={4} md={6} sm={6} xs={12}>
-//             <TotalEmailLineChartCard
-//               isLoading={isLoading}
-//               title={'Stats By Day (last 12 days)'}
-//               grievanceComplains={allEmailsStats?.allMailsDayCount}
-//               grievanceQuerys={allEmailsStats?.repliedMailsDayCount}
-//               allMailsData={allEmailsStats?.allMailsByDay}
-//               allRepliedMails={allEmailsStats?.allRepliedMailsByDay}
-//             />
-//           </Grid>
-//           <Grid item lg={4} md={12} sm={12} xs={12}>
-//             <Grid container spacing={gridSpacing}>
-//               <Grid item sm={6} xs={12} md={6} lg={12}>
-//   <TotalIncomeDarkCard isLoading={isLoading} allEmailsStats={allEmailsStats} />
-// </Grid>
-// <Grid item sm={6} xs={12} md={6} lg={12}>
-//   <TotalIncomeLightCard isLoading={isLoading} allEmailsStats={allEmailsStats} />
-// </Grid>
-//   <Grid item xs={12}>   {/* or use sm/md/lg as needed */}
-//   </Grid>
-//             </Grid>
-//               <ChatBotCard/>
-//           </Grid>
-//         </Grid>
-//       </Grid>
-//       <Grid item xs={12}>
-//         <Grid container spacing={gridSpacing}>
-//           <Grid item xs={12} md={8}>
-//             <TotalGrievanceBarChart emailData={allEmails} />
-//           </Grid>
-//         </Grid>
-//       </Grid>
-//     </Grid>
+    //             <TotalEmailLineChartCard
+    //               isLoading={isLoading}
+    //               title={'Stats By Month'}
+    //               grievanceComplains={allEmailsStats?.allMails}
+    //               grievanceQuerys={allEmailsStats?.repliedMails}
+    //               allMailsData={allEmailsStats?.allMailsByMonth}
+    //               allRepliedMails={allEmailsStats?.allRepliedMailsByMonth}
+    //             />
+    //           </Grid>
+    //           <Grid item lg={4} md={6} sm={6} xs={12}>
+    //             <TotalEmailLineChartCard
+    //               isLoading={isLoading}
+    //               title={'Stats By Day (last 12 days)'}
+    //               grievanceComplains={allEmailsStats?.allMailsDayCount}
+    //               grievanceQuerys={allEmailsStats?.repliedMailsDayCount}
+    //               allMailsData={allEmailsStats?.allMailsByDay}
+    //               allRepliedMails={allEmailsStats?.allRepliedMailsByDay}
+    //             />
+    //           </Grid>
+    //           <Grid item lg={4} md={12} sm={12} xs={12}>
+    //             <Grid container spacing={gridSpacing}>
+    //               <Grid item sm={6} xs={12} md={6} lg={12}>
+    //   <TotalIncomeDarkCard isLoading={isLoading} allEmailsStats={allEmailsStats} />
+    // </Grid>
+    // <Grid item sm={6} xs={12} md={6} lg={12}>
+    //   <TotalIncomeLightCard isLoading={isLoading} allEmailsStats={allEmailsStats} />
+    // </Grid>
+    //   <Grid item xs={12}>   {/* or use sm/md/lg as needed */}
+    //   </Grid>
+    //             </Grid>
+    //               <ChatBotCard/>
+    //           </Grid>
+    //         </Grid>
+    //       </Grid>
+    //       <Grid item xs={12}>
+    //         <Grid container spacing={gridSpacing}>
+    //           <Grid item xs={12} md={8}>
+    //             <TotalGrievanceBarChart emailData={allEmails} />
+    //           </Grid>
+    //         </Grid>
+    //       </Grid>
+    //     </Grid>
 
-
-<Grid container spacing={gridSpacing}>
-  {isLoadingOverlay && <BackDrop isLoading={isLoadingOverlay} />}
-  <Toaster position="top-center" reverseOrder={false} />
-
-  {/* Left Side: Col 1 and 2 (8 columns total) */}
-  <Grid item lg={8} md={12} xs={12}>
     <Grid container spacing={gridSpacing}>
-      {/* Row 1 - Two Line Chart Cards */}
-      <Grid item xs={12} md={6}>
-        <TotalEmailLineChartCard
-          isLoading={isLoading}
-          title="Stats By Month"
-          grievanceComplains={allEmailsStats?.allMails}
-          grievanceQuerys={allEmailsStats?.repliedMails}
-          allMailsData={allEmailsStats?.allMailsByMonth}
-          allRepliedMails={allEmailsStats?.allRepliedMailsByMonth}
-        />
+      {isLoadingOverlay && <BackDrop isLoading={isLoadingOverlay} />}
+      <Toaster position="top-center" reverseOrder={false} />
+
+      {/* Left Side: Col 1 and 2 (8 columns total) */}
+      <Grid item lg={8} md={12} xs={12}>
+        <Grid container spacing={gridSpacing}>
+          {/* Row 1 - Two Line Chart Cards */}
+          <Grid item xs={12} md={6}>
+            <TotalEmailLineChartCard
+              isLoading={isLoading}
+              title="Monthly Email Activity"
+              grievanceComplains={allEmailsStats?.allMails}
+              grievanceQuerys={allEmailsStats?.repliedMails}
+              allMailsData={allEmailsStats?.allMailsByMonth}
+              allRepliedMails={allEmailsStats?.allRepliedMailsByMonth}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <TotalEmailLineChartCard
+              isLoading={isLoading}
+              title="Daily Email Activity (Last 14 Days)"
+              grievanceComplains={allEmailsStats?.allMailsDayCount}
+              grievanceQuerys={allEmailsStats?.repliedMailsDayCount}
+              allMailsData={allEmailsStats?.allMailsByDay}
+              allRepliedMails={allEmailsStats?.allRepliedMailsByDay}
+            />
+          </Grid>
+
+          {/* Row 2 - Bar Chart */}
+          <Grid item xs={12}>
+            <TotalGrievanceBarChart emailData={allEmails} />
+          </Grid>
+        </Grid>
       </Grid>
 
-      <Grid item xs={12} md={6}>
-        <TotalEmailLineChartCard
-          isLoading={isLoading}
-          title="Stats By Day (last 12 days)"
-          grievanceComplains={allEmailsStats?.allMailsDayCount}
-          grievanceQuerys={allEmailsStats?.repliedMailsDayCount}
-          allMailsData={allEmailsStats?.allMailsByDay}
-          allRepliedMails={allEmailsStats?.allRepliedMailsByDay}
-        />
-      </Grid>
-
-      {/* Row 2 - Bar Chart */}
-      <Grid item xs={12}>
-        <TotalGrievanceBarChart emailData={allEmails} />
+      {/* Right Side: Col 3 (4 columns) spans both rows visually */}
+      <Grid item lg={4} md={12} xs={12}>
+        <Grid container spacing={gridSpacing} direction="column">
+          <Grid item>
+            <TotalIncomeDarkCard isLoading={isLoading} allEmailsStats={allEmailsStats} />
+          </Grid>
+          <Grid item>
+<TotalIncomeLightCard isLoading={isLoading} llmRepliedMails={allEmailsStats?.llmRepliedMails ?? 0} />
+          </Grid>
+          <Grid item>
+            <ChatBotCard />
+          </Grid>
+        </Grid>
       </Grid>
     </Grid>
-  </Grid>
-
-  {/* Right Side: Col 3 (4 columns) spans both rows visually */}
-  <Grid item lg={4} md={12} xs={12}>
-    <Grid container spacing={gridSpacing} direction="column">
-      <Grid item>
-        <TotalIncomeDarkCard isLoading={isLoading} allEmailsStats={allEmailsStats} />
-      </Grid>
-      <Grid item>
-        <TotalIncomeLightCard isLoading={isLoading} allEmailsStats={allEmailsStats} />
-      </Grid>
-      <Grid item>
-        <ChatBotCard />
-      </Grid>
-    </Grid>
-  </Grid>
-</Grid>
-
-
   );
 };
 

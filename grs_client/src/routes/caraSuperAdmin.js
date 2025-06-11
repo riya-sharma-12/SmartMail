@@ -8,14 +8,11 @@ import MainLayout from 'layout/MainLayout';
 // Cara Super-Admin Routing
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
 // const RegisterNewUser = Loadable(lazy(() => import('views/caraSuperAdminViews/registerNewUser')));
-const ViewAllCaraUsers = Loadable(lazy(() => import('views/caraSuperAdminViews/viewAllCaraUsers')));
-const RegisterGrievance = Loadable(lazy(() => import('views/caraSuperAdminViews/registerGrievance')));
 // grievances reports
-const AllGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/allEmails')));
-const DistGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/topPriorityMails')));
+const AllEmails = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/allEmails')));
+const TopPriorityMails = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/topPriorityMails')));
 const RepliedEmailsView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/repliedEmailView')));
-const PushedbackGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/pushedbackGrievancesView')));
-const ResolvedGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/resolvedGrievancesView')));
+const NewEmailsView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/newEmailsView')));
 // const ClosedGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/closedGrievancesView')));
 // ==============================|| Cara Super-Admin ROUTING ||============================== //
 
@@ -31,42 +28,22 @@ const caraSuperAdminRoutes = {
             path: '/dashboard',
             element: <DashboardDefault />
         },
-        // {
-        //     path: '/registernewuser',
-        //     element: <RegisterNewUser />
-        // },
         {
-            path: '/userreports/allusers',
-            element: <ViewAllCaraUsers />
+            path: '/all-emails',
+            element: <AllEmails />
         },
         {
-            path: '/regnewgrievance',
-            element: <RegisterGrievance />
+            path: '/top-priority-emails',
+            element: <TopPriorityMails />
         },
         {
-            path: '/reports/all-emails',
-            element: <AllGrievancesView />
-        },
-        {
-            path: '/reports/top-priority-emails',
-            element: <DistGrievancesView />
-        },
-        {
-            path: '/reports/replied-emails',
+            path: '/replied-emails',
             element: <RepliedEmailsView />
         },
         {
-            path: '/reports/pushbackedgrievanes',
-            element: <PushedbackGrievancesView />
-        },
-        {
-            path: '/reports/new-emails',
-            element: <ResolvedGrievancesView />
-        },
-        // {
-        //     path: '/reports/unread-emails',
-        //     element: <ClosedGrievancesView />
-        // }
+            path: '/new-emails',
+            element: <NewEmailsView />
+        }
     ]
 };
 

@@ -79,7 +79,7 @@ const TotalIncomeDarkCard = ({ isLoading, allEmailsStats }) => {
                   }
                   secondary={
                     <Typography variant="subtitle2" sx={{ color: 'primary.light', mt: 0.25 }}>
-                      Total Mails
+                      Total Mails Received
                     </Typography>
                   }
                 />

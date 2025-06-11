@@ -38,8 +38,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 }));
 
 // ==============================|| DASHBOARD - TOTAL INCOME LIGHT CARD ||============================== //
-
-const TotalIncomeLightCard = ({ isLoading, allEmailsStats }) => {
+const TotalIncomeLightCard = ({ isLoading, llmRepliedMails }) => {
   const theme = useTheme();
 
   return (
@@ -72,7 +71,7 @@ const TotalIncomeLightCard = ({ isLoading, allEmailsStats }) => {
                   }}
                   primary={
                     <Typography variant="h4">
-                      {allEmailsStats?.repliedMails}
+                      {llmRepliedMails ?? 0}
                     </Typography>
                   }
                   secondary={
@@ -83,7 +82,7 @@ const TotalIncomeLightCard = ({ isLoading, allEmailsStats }) => {
                         mt: 0.5
                       }}
                     >
-                      Total Replied
+                      Total Replies Generated
                     </Typography>
                   }
                 />
@@ -97,7 +96,8 @@ const TotalIncomeLightCard = ({ isLoading, allEmailsStats }) => {
 };
 
 TotalIncomeLightCard.propTypes = {
-  isLoading: PropTypes.bool
+  isLoading: PropTypes.bool,
+  llmRepliedMails: PropTypes.number
 };
 
 export default TotalIncomeLightCard;

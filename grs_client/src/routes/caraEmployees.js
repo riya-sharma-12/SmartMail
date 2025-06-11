@@ -28,7 +28,7 @@ const caraEmployeesRoutes = {
             element: <DashboardDefault />
         },
         {
-            path: '/reports/new-emails',
+            path: '/new-emails',
             element: <ResolvedGrievancesView />
         },
         {

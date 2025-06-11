@@ -117,21 +117,7 @@ const ResolvedGrievancesView = () => {
     const raw = (params.value ?? '').toString().trim();
     const cleaned = raw.replace(/^[^a-zA-Z0-9]+/, '');
     return cleaned.length === 0 ? 'NA' : cleaned;
-  }},
-   {
-  field: 'email_replied_at',
-  headerName: 'Reply Generated At',
-  type: 'dateTime',
-  width: 180,
-  valueFormatter: (params) => {
-    if (!params.value) return '';
-    const date = new Date(params.value);
-    return date.toLocaleString(undefined, {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    });
-  },
-}
+  }}
     ];
     const getAllGrievances = async () => {
         try {

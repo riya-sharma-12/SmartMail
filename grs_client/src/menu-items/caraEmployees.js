@@ -29,7 +29,7 @@ const caraEmployees = {
                     id: 'new-emails',
                     title: 'New Emails',
                     type: 'item',
-                    url: '/reports/new-emails',
+                    url: '/new-emails',
                     breadcrumbs: false
                 },
                 {

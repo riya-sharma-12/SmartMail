@@ -79,37 +79,44 @@ const AllGrievancesView = () => {
       width: 135,
       valueGetter: (params) => (params.row.email_status === 0 ? 'Not Replied' : 'Reply Sent')
     },
-    { field: 'email_created_at', headerName: 'Created At', type:'date', width: 135, valueFormatter: (params) => {
-        return new Date(params.value).toLocaleDateString();
-      } },
-     { field: 'email_received_at', headerName: 'Received At', type:'date', width: 135, valueFormatter: (params) => {
-        return new Date(params.value).toLocaleDateString();
-      } },
-  {
+    {   field: 'email_created_at',
+  headerName: 'Created At',
+  type: 'dateTime',
+  width: 180,
+  valueFormatter: (params) => {
+    const date = new Date(params.value);
+    return date.toLocaleString(undefined, {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    });
+  },
+}
+,
+     { field: 'email_received_at', headerName: 'Received At', type: 'dateTime',
+  width: 180,
+  valueFormatter: (params) => {
+    const date = new Date(params.value);
+    return date.toLocaleString(undefined, {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    });
+  }, },
+{
   field: 'llm_reply',
   headerName: 'LLM Reply',
   width: 200,
-  // sortingOrder: ['asc', 'desc'], // Optional, but helps toggle both directions
+  type: 'string',
+  valueGetter: (params) => {
+    const raw = (params.value ?? '').toString().trim();
+    const cleaned = raw.replace(/^[^a-zA-Z0-9]+/, '');
+    return cleaned.length === 0 ? 'NA' : cleaned;
+  },
   sortComparator: (v1, v2) => {
     const clean = (val) =>
-      (val || '')
-        .toString()
-        .trim()
-        .replace(/^[^a-zA-Z0-9]+/, '')
-        .toLowerCase();
+      (val ?? '').toString().replace(/^[^a-zA-Z0-9]+/, '').trim().toLowerCase();
 
-    const a = clean(v1);
-    const b = clean(v2);
-
-    // Null or empty values should always come LAST (bottom), regardless of direction
-    const isEmpty = (str) => !str || str.length === 0;
-
-    if (isEmpty(a) && !isEmpty(b)) return 1;
-    if (!isEmpty(a) && isEmpty(b)) return -1;
-    if (isEmpty(a) && isEmpty(b)) return 0;
-
-    return a.localeCompare(b);
-  }
+    return clean(v1).localeCompare(clean(v2));
+  },
 }
 
 ,
@@ -117,6 +124,17 @@ const AllGrievancesView = () => {
       field: 'final_reply',
       headerName: 'Final Reply',
       width: 200,
+      valueGetter: (params) => {
+    const raw = (params.value ?? '').toString().trim();
+    const cleaned = raw.replace(/^[^a-zA-Z0-9]+/, '');
+    return cleaned.length === 0 ? 'NA' : cleaned;
+  },
+  sortComparator: (v1, v2) => {
+    const clean = (val) =>
+      (val ?? '').toString().replace(/^[^a-zA-Z0-9]+/, '').trim().toLowerCase();
+
+    return clean(v1).localeCompare(clean(v2));
+  },
       renderCell: (params) => (
         <div
           onDoubleClick={() => {
@@ -133,12 +151,16 @@ const AllGrievancesView = () => {
    {
   field: 'email_replied_at',
   headerName: 'Reply Generated At',
-  type: 'date',
-  width: 135,
+  type: 'dateTime',
+  width: 180,
   valueFormatter: (params) => {
-    const value = params?.value;
-    return value ? new Date(value).toLocaleDateString() : '';
-  }
+    if (!params.value) return '';
+    const date = new Date(params.value);
+    return date.toLocaleString(undefined, {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    });
+  },
 }
   ];
 
@@ -150,7 +172,7 @@ const AllGrievancesView = () => {
       else {
         toast.success(`Success! ${data?.msg}`);
         const filtered = (data?.allGrievances || []).filter(
-  (email) => email.llm_reply !== null && email.llm_reply !== ''
+  (email) => email.llm_reply !== null && email.llm_reply !== 'NA' && email.llm_reply !== ''
 );
 setAllGrievances(filtered);
 
@@ -166,55 +188,39 @@ setAllGrievances(filtered);
     getAllGrievances();
   }, []);
 
-  const handleSaveEditedReply = async () => {
-  if (!selectedEmail?.reply_id) {
-    toast.error('Reply ID missing, cannot update reply');
+
+const handleSaveEditedReply = async () => {
+  if (!selectedEmail?.email_token) {
+    toast.error('Email Token missing');
     return;
   }
 
   try {
     const payload = {
-      reply_id: selectedEmail.reply_id,
-      final_reply: editedReply
+      reply_id: selectedEmail?.reply_id ?? null, 
+      final_reply: editedReply,
+      resp_id: selectedEmail.email_token, 
+      org_id: selectedEmail.org_id ?? null 
     };
 
     const response = await CustomPostApi('/reply/saveReply', payload);
 
-    if (response?.data?.success) {
+    if (response?.data?.success && response.data.reply_id) {
       const updated = allGrievances.map((item) =>
         item.email_token === selectedEmail.email_token
-          ? { ...item, final_reply: editedReply }
+          ? { ...item, final_reply: editedReply, reply_id: response.data.reply_id }
           : item
       );
       setAllGrievances(updated);
-      toast.success('Reply updated in DB!');
+      setSelectedEmail((prev) => ({ ...prev, reply_id: response.data.reply_id }));
+      toast.success('Reply saved successfully!');
     } else {
-      toast.error('Failed to update reply in DB');
+      toast.error('Failed to save reply');
     }
   } catch (err) {
-    toast.error(`Error updating reply: ${err.message}`);
+    toast.error(`Error saving reply: ${err.message}`);
   }
 };
-
-
-// const handleSubmitReply = async () => {
-//   if (!selectedEmail?.reply_id) {
-//     toast.error('Reply ID missing, cannot submit reply');
-//     return;
-//   }
-//   try {
-//     const payload = {
-//       reply_id: selectedEmail.reply_id,
-//       resp_id: selectedEmail.email_token // or selectedEmail.resp_id if you renamed it
-//     };
-//     const response = await CustomPostApi('/reply/sendReplyEmail', payload);
-//     console.log("Reply sent response:", response);
-//     toast.success('Reply sent!');
-//     setEditDialogOpen(false);
-//   } catch (err) {
-//     toast.error('Failed to send reply');
-//   }
-// };
 
 
 const handleSubmitReply = async () => {
@@ -264,7 +270,7 @@ const handleSubmitReply = async () => {
       <Grid item xs={12}>
         <Grid container justifyContent="center" sx={{ mb: 2 }}>
           <Typography variant="h2">
-            <u>View Drafted Emails</u>
+            <u>View AI Replied Emails</u>
           </Typography>
         </Grid>
       </Grid>

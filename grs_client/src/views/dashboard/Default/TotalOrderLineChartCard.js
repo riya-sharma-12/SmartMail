@@ -11,10 +11,7 @@ import Chart from 'react-apexcharts';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import SkeletonTotalOrderCard from 'ui-component/cards/Skeleton/EarningCard';
-
-import ChartDataMonth from './chart-data/total-order-month-line-chart';
 import CustomChartData from './chart-data/custom-chart-bar';
-import ChartDataYear from './chart-data/total-order-year-line-chart';
 
 // assets
 import EarningIcon from 'assets/images/icons/earning.svg';
@@ -67,7 +64,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 // ==============================|| DASHBOARD - TOTAL ORDER LINE CHART CARD ||============================== //
 
 const TotalOrderLineChartCard = ({ isLoading, title, grievanceComplains, grievanceQuerys, allMailsData, allRepliedMails }) => {
-  const xAxisLabel = title === 'Stats By Day (last 12 days)' ? 'Days' : 'Months';
+  const xAxisLabel = title === 'Daily Email Activity (Last 14 Days)' ? 'Days' : 'Months';
   const theme = useTheme();
   let xAxisArrayOfMails = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   let xAxisArrayOfReplied = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -75,7 +72,7 @@ const TotalOrderLineChartCard = ({ isLoading, title, grievanceComplains, grievan
   console.log('XAXIS__________',xAxisLabel);
   let allMailsByDay = [];
   let repliedMailsByDay = [];
-  if (title === 'Stats By Day (last 12 days)') {
+  if (title === 'Daily Email Activity (Last 14 Days)') {
     console.log('inside if');
     xAxisArrayOfMails = [];
     xAxisArrayOfReplied = [];
@@ -96,7 +93,7 @@ const TotalOrderLineChartCard = ({ isLoading, title, grievanceComplains, grievan
   }
 
   //console.log("inside if2", xAxisArray, allMailsData)
-  const [timeValue, setTimeValue] = useState(false);
+const [timeValue, setTimeValue] = useState(true); // true = All Mails selected by default
   const handleChangeTime = (event, newValue) => {
     setTimeValue(newValue);
   };
@@ -186,7 +183,6 @@ const TotalOrderLineChartCard = ({ isLoading, title, grievanceComplains, grievan
                     </Grid>
                   </Grid>
                   <Grid item xs={6}>
-                    {/* <Chart {...ChartDataYear} /> */}
                     {timeValue ? (
   <Chart
     {...CustomChartData('Number of Mails', xAxisLabel, "Mails", xAxisArrayOfMails, allMailsData)}

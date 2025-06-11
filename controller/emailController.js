@@ -66,10 +66,7 @@ const emailData = {
   received_at: parsed.date || new Date(),
   email_message_id:parsed?.messageId
 };
-
-
-            // Save to DB
-            await saveEmailToDB(emailData);
+          await saveEmailToDB(emailData);
           });
         });
 

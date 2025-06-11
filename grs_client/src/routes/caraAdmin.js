@@ -13,8 +13,8 @@ const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')))
 // grievances reports
 const AllGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/allEmails')));
 const DistGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/topPriorityMails')));
-const PushedbackGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/pushedbackGrievancesView')));
-const ResolvedGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/resolvedGrievancesView')));
+// const PushedbackGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/pushedbackGrievancesView')));
+const ResolvedGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/newEmailsView')));
 // const ClosedGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/closedGrievancesView')));
 // ==============================|| Cara Super-Admin ROUTING ||============================== //
 
@@ -35,19 +35,19 @@ const caraAdminRoutes = {
         //     element: <RegisterGrievance />
         // },
         {
-            path: '/reports/all-emails',
+            path: '/all-emails',
             element: <AllGrievancesView />
         },
         {
-            path: '/reports/top-priority-emails',
+            path: '/top-priority-emails',
             element: <DistGrievancesView />
         },
+        // {
+        //     path: '/reports/pushbackedgrievanes',
+        //     element: <PushedbackGrievancesView />
+        // },
         {
-            path: '/reports/pushbackedgrievanes',
-            element: <PushedbackGrievancesView />
-        },
-        {
-            path: '/reports/new-emails',
+            path: '/new-emails',
             element: <ResolvedGrievancesView />
         },
         // {

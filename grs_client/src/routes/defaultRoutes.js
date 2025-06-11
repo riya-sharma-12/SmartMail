@@ -5,7 +5,7 @@ import MinimalLayout from 'layout/MinimalLayout';
 import Loadable from 'ui-component/Loadable';
 
 const PageNotFoundPage = Loadable(lazy(() => import('components/common/PageNotFoundPage')));
-// const AuthLogin = Loadable(lazy(() => import('views/pages/authentication/authentication3/Login3')));
+const AuthLogin = Loadable(lazy(() => import('views/pages/authentication/authentication3/Login3')));
 const PdfViewer = Loadable(lazy(() => import('views/common/PdfViewer')));
 
 // ==============================|| DEFAULT ROUTING ||============================== //

@@ -37,14 +37,14 @@ const caraAdmin = {
                     id: 'all-emails',
                     title: 'All Emails',
                     type: 'item',
-                    url: '/reports/all-emails',
+                    url: '/all-emails',
                     breadcrumbs: false
                 },
                 {
                     id: 'top-priority-emails',
                     title: 'Top Priority Emails',
                     type: 'item',
-                    url: '/reports/top-priority-emails',
+                    url: '/top-priority-emails',
                     breadcrumbs: false
                 },
                 // {
@@ -58,7 +58,7 @@ const caraAdmin = {
                     id: 'new-emails',
                     title: 'New Emails',
                     type: 'item',
-                    url: '/reports/new-emails',
+                    url: '/new-emails',
                     breadcrumbs: false
                 },
                 // {
@@ -70,9 +70,9 @@ const caraAdmin = {
                 // },
                 {
                     id: 'replied-emails',
-                    title: 'Drafted Emails',
+                    title: 'AI Replied Emails',
                     type: 'item',
-                    url: '/reports/replied-emails',
+                    url: '/replied-emails',
                     breadcrumbs: false
                 }
             ]

@@ -34,7 +34,10 @@ const CustomChartData = (title, xAxisLabel, seriesName, categories, data) => {
         style: {
           colors: '#fff'
         }
-      }
+      },
+      tooltip: {
+    enabled: false  // ✅ This disables the mini floating x-label
+  }
     },
     yaxis: {
       min: 0,

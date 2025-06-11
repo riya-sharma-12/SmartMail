@@ -84,16 +84,145 @@ const HeaderAvatarStyle = styled(Avatar, { shouldForwardProp })(({ theme }) => (
 
 const columns = [
   // { field: 'id', headerName: 'S.NO', width: 200 },
-  { field: 'from_email', headerName: 'Email From', width: 150 },
-  { field: 'email-subject', headerName: 'Subject', width: 200 },
-  { field: 'email-body', headerName: 'Body', width: 200 },
-  { field: 'email-category', headerName: 'Categories', width: 200 },
-  { field: 'email_status', headerName: 'Status', width: 200, valueGetter: (params) => (params.row.email_status == 0 ? 'No' : 'Yes') },
-  { field: 'email_created_at', headerName: 'Created At', width: 200 },
-  { field: 'email_received_at', headerName: 'Received At', width: 200 },
-  { field: 'llm_reply', headerName: 'LLM Reply', width: 200 },
-  { field: 'final_reply', headerName: 'Final Reply', width: 200 },
-  { field: 'email_replied_at', headerName: 'Replied At', width: 200 },
+   {
+      field: 'from_email',
+      headerName: 'Email From',
+      width: 150,
+      valueFormatter: (params) => {
+        let email = params.value || '';
+        return email.startsWith('"') ? email.substring(1) : email;
+      }
+    },
+    {
+  field: 'email-subject',
+  headerName: 'Subject',
+  width: 200,
+
+  // Custom sort comparator to remove quotes before comparison
+  sortComparator: (v1, v2) => {
+    const clean = (val) =>
+      (val || '').replace(/^[“"']|[”"']$/g, '').toLowerCase();
+
+    return clean(v1).localeCompare(clean(v2));
+  }
+},
+{
+  field: 'email-body',
+  headerName: 'Body',
+  width: 200,
+
+  // ✅ Show the original unmodified value — NO valueFormatter
+
+  // ✅ Sort using cleaned value (remove leading non-alphanumerics)
+  sortComparator: (v1, v2) => {
+    const clean = (val) =>
+      (val || '').replace(/^[^a-zA-Z0-9]+/, '').trim().toLowerCase();
+
+    return clean(v1).localeCompare(clean(v2));
+  }
+},
+{
+  field: 'email-category',
+  headerName: 'Categories',
+  width: 135,
+  valueFormatter: (params) => {
+    const value = params.value;
+    if (value === 'top-priority') return 'Top Priority';
+    if (value === 'less-priority') return 'Less Priority';
+    if (value === 'spam') return 'Spam Mail';
+    return value; // default fallback
+  }
+},
+    {
+      field: 'email_status',
+      headerName: 'Status',
+      width: 135,
+      valueGetter: (params) => (params.row.email_status === 0 ? 'Not Replied' : 'Reply Sent')
+    },
+  {
+  field: 'email_created_at',
+  headerName: 'Created At',
+  type: 'dateTime',
+  width: 180,
+  valueFormatter: (params) => {
+    const date = new Date(params.value);
+    return date.toLocaleString(undefined, {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    });
+  },
+}
+,
+     { field: 'email_received_at', headerName: 'Received At', type: 'dateTime',
+  width: 180,
+  valueFormatter: (params) => {
+    const date = new Date(params.value);
+    return date.toLocaleString(undefined, {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    });
+  }, },
+{
+  field: 'llm_reply',
+  headerName: 'LLM Reply',
+  width: 200,
+  type: 'string',
+  valueGetter: (params) => {
+    const raw = (params.value ?? '').toString().trim();
+    const cleaned = raw.replace(/^[^a-zA-Z0-9]+/, '');
+    return cleaned.length === 0 ? 'NA' : cleaned;
+  },
+  sortComparator: (v1, v2) => {
+    const clean = (val) =>
+      (val ?? '').toString().replace(/^[^a-zA-Z0-9]+/, '').trim().toLowerCase();
+
+    return clean(v1).localeCompare(clean(v2));
+  },
+}
+
+,
+    {
+      field: 'final_reply',
+      headerName: 'Final Reply',
+      width: 200,
+      valueGetter: (params) => {
+    const raw = (params.value ?? '').toString().trim();
+    const cleaned = raw.replace(/^[^a-zA-Z0-9]+/, '');
+    return cleaned.length === 0 ? 'NA' : cleaned;
+  },
+  sortComparator: (v1, v2) => {
+    const clean = (val) =>
+      (val ?? '').toString().replace(/^[^a-zA-Z0-9]+/, '').trim().toLowerCase();
+
+    return clean(v1).localeCompare(clean(v2));
+  },
+      // renderCell: (params) => (
+      //   <div
+      //     onDoubleClick={() => {
+      //       setSelectedEmail(params.row);
+      //       setEditedReply(params.value || '');
+      //       setEditDialogOpen(true);
+      //     }}
+      //     style={{ cursor: 'pointer'}}
+      //   >
+      //     {params.value}
+      //   </div>
+      // )
+    },
+   {
+  field: 'email_replied_at',
+  headerName: 'Reply Generated At',
+  type: 'dateTime',
+  width: 180,
+  valueFormatter: (params) => {
+    if (!params.value) return '';
+    const date = new Date(params.value);
+    return date.toLocaleString(undefined, {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    });
+  },
+}
 ];
 
 // ==============================|| SEARCH INPUT - MOBILE||============================== //
