@@ -15,6 +15,7 @@ const AllGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/
 const DistGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/topPriorityMails')));
 // const PushedbackGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/pushedbackGrievancesView')));
 const ResolvedGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/newEmailsView')));
+const RepliedEmailView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/repliedEmailView')));
 // const ClosedGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/closedGrievancesView')));
 // ==============================|| Cara Super-Admin ROUTING ||============================== //
 
@@ -50,10 +51,10 @@ const caraAdminRoutes = {
             path: '/new-emails',
             element: <ResolvedGrievancesView />
         },
-        // {
-        //     path: '/reports/unread-emails',
-        //     element: <ClosedGrievancesView />
-        // }
+        {
+            path: '/replied-emails',
+            element: <RepliedEmailView />
+        }
     ]
 };
 

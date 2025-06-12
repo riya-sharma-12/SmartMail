@@ -53,6 +53,7 @@ export async function CustomGetApi(url, contentType) {
     let data = null;
     let error = null;
     let headers = null;
+    //console.log("api-calling token", token);
     try {
         const resp = await axios.get(url, {
             headers: {

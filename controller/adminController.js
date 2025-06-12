@@ -1,4 +1,4 @@
-const { Email, Reply } = require('../models/index');
+const { Email, Reply, Organization } = require('../models/index');
 const { Op } = require('sequelize');
 const { default: ollama } = require('ollama');
 const { response } = require('express');
@@ -6,13 +6,20 @@ const { tr } = require('date-fns/locale');
 const modelName = 'llama3.2';
 const getAllEmails = async (req, res) => {
   try {
+    const userEmail = req?.user?.email;
+    if(!userEmail){ res.status(401).json({ msg: 'User Not Found'});}
+    const orgData = await Organization.findOne({where:{
+      email:userEmail
+    }})
+    const org_id = orgData?.org_id;
     const emails = await Email.findAll({
   include: [{
     model: Reply
   }],
+  where: { org_id }, 
       order: [['received_at', 'DESC']]
     });
-
+    console.log("len of emails", emails.length)
     const formatted = emails.map(email => {
   const firstReply = email.Reply || {}; 
       return {
@@ -48,6 +55,7 @@ const getAllEmailsBySubjs = async (req, res) => {
   }],
   where: {
     subject: {
+      org_id,  
       [Op.iLike]: `%${emailSubject}%`
     }
   },

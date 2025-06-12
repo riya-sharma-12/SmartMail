@@ -1,7 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const emailRoutes = require('./routes/emailRoutes');
-const { emailController } = require('./controller/emailController');
+const { fetchAllMails } = require('./controller/emailController');
 const { server } = require('./controller/authController');
 const authRoutes = require('./routes/authRoutes');
 const { processReplies } = require('./services/replyProcessor');
@@ -20,6 +20,6 @@ app.use('/api/auth', authRoutes);
 
 app.listen(5000, async () => {
   console.log('Server running on http://localhost:5000 --');
-  // await emailController();
+  // await fetchAllMails();
   // processReplies();
 });

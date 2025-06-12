@@ -86,3 +86,23 @@
 // }
 
 // module.exports = { emailController };
+
+// const crypto = require("crypto");
+// require("dotenv").config();
+
+// const gmailAppPassword = "ctvtsuhdcaqfmrcp";
+// const secret = process.env.JWT_SECRET;
+
+// // Generate key and IV
+// const key = crypto.createHash("sha256").update(secret).digest();
+// const iv = crypto.randomBytes(16);
+
+// // Encrypt
+// const cipher = crypto.createCipheriv("aes-256-ctr", key, iv);
+// let encrypted = cipher.update(gmailAppPassword, "utf8", "hex");
+// encrypted += cipher.final("hex");
+
+// // Combine IV and encrypted value
+// const encryptedAppPassword = iv.toString("hex") + ":" + encrypted;
+
+// console.log("Encrypted gmail_app_password:", encryptedAppPassword);

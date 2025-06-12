@@ -58,7 +58,7 @@ const decrypt = (encrypted) => {
 const sendReplyEmail = async (req, res) => {
   try {
     const { reply_id, resp_id } = req.body;
-
+     const userEmail = req?.user?.email;
     const reply = await Reply.findOne({ where: { reply_id } });
     const email = await Email.findOne({ where: { resp_id } });
 
@@ -67,20 +67,18 @@ const sendReplyEmail = async (req, res) => {
     }
 
     const fromEmail = extractEmailAddress(email.from_email);
-    const org = await Organization.findOne({ where: { org_id: reply.org_id } });
+    const org = await Organization.findOne({ where: { email: userEmail } });
 
     if (!org) {
       return res.status(404).json({ message: 'Organization not found' });
     }
-
-    const userEmail = org.email;
-    const decryptedAppPassword = decrypt(org.gmail_app_password);
-
+    const gmailAppPassword = org.gmail_app_password
+    console.log(userEmail, gmailAppPassword, "test")
     const transporter = nodemailer.createTransport({
       service: 'Gmail',
       auth: {
         user: userEmail,
-        pass: decryptedAppPassword
+        pass: gmailAppPassword
       }
     });
 

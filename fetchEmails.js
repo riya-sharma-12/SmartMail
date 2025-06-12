@@ -1,76 +1,107 @@
-// require('dotenv').config();
-// const Imap = require('imap');
-// const { simpleParser } = require('mailparser');
-// const { format } = require('date-fns');
-// const { v4: uuidv4 } = require('uuid');
-// const Connection = require('imap');
+const { simpleParser } = require("mailparser");
+const { format } = require("date-fns");
+const Imap = require("imap");
+const { Email, Organization } = require("./models/index");
+const { saveEmailToDB } = require("./services/emailService");
+const { categorizeEmail } = require("./services/categorizeEmails");
 
-// const imapConfig = {
-//   user: process.env.EMAIL_USER,
-//   password: process.env.EMAIL_PASS,
-//   host: 'imap.gmail.com',
-//   port: 993,
-//   tls: true,
-//   tlsOptions: {
-//     rejectUnauthorized: false
-//   }
-// };
+function emailController(org_id, imap) {
+  imap.once("ready", () => {
+    imap.openBox("INBOX", false, (err, box) => {
+      if (err) throw err;
 
-// const imap = new Imap(imapConfig);
+      const today = format(new Date(), "dd-MMM-yyyy");
 
-// function fetchEmails() {
-//   imap.once('ready', () => {
-//     imap.openBox('INBOX', false, (err, box) => {
-//       if (err) throw err;
+      imap.search(["UNSEEN", ["ON", today]], (err, results) => {
+        if (err) throw err;
 
-//       const today = format(new Date(), 'dd-MMM-yyyy');
+        if (!results || results.length === 0) {
+          console.log("No new emails for today.");
+          imap.end();
+          return;
+        }
 
-//       imap.search(['UNSEEN', ['ON', today]], (err, results) => {
-//         if (err) throw err;
+        const fetch = imap.fetch(results, { bodies: "" });
 
-//         if (!results || results.length === 0) {
-//           console.log('No new emails for today.');
-//           imap.end();
-//           return;
-//         }
+        fetch.on("message", (msg) => {
+          let rawData = "";
 
-//         const fetch = imap.fetch(results, { bodies: '' });
+          msg.on("body", (stream) => {
+            stream.on("data", (chunk) => {
+              rawData += chunk.toString("utf8");
+            });
+          });
 
-//         fetch.on('message', (msg) => {
-//           let rawData = '';
+          msg.once("end", async () => {
+            const parsed = await simpleParser(rawData);
+            console.log("--------parsed----------", parsed?.messageId, parsed);
+            console.log("\n--- New Email ---");
+            console.log("From:", parsed.from.text);
+            console.log("Subject:", parsed.subject);
+            console.log("Date:", parsed.date);
+            console.log("Body:", parsed.text?.slice(0, 300) || "[No Text]");
 
-//           msg.on('body', (stream) => {
-//             stream.on('data', (chunk) => {
-//               rawData += chunk.toString('utf8');
-//             });
-//           });
+            const category = categorizeEmail({
+              subject: parsed.subject || "",
+              body: parsed.text || "",
+            });
 
-//           msg.once('end', async () => {
-//             const parsed = await simpleParser(rawData);
-//             const emailId = uuidv4(); 
-//             console.log('\n--- New Email ---');
-//             console.log('Email ID:', emailId);
-//             console.log('From:', parsed.from.text);
-//             console.log('Subject:', parsed.subject);
-//             console.log('Date:', parsed.date);
-//             console.log('Body:', parsed.text?.slice(0, 300) || '[No Text]');
-//           });
-//         });
-//         fetch.once('end', () => {
-//           console.log('\n All new emails fetched for today.');
-//           imap.end();
-//         });
-//       });
-//     });
-//   });
+            const emailData = {
+              from_email: parsed.from.text,
+              subject: parsed.subject || "[No Subject]",
+              body: parsed.text || "[No Body]",
+              category: category,
+              status: 0,
+              created_at: new Date(),
+              received_at: parsed.date || new Date(),
+              email_message_id: parsed?.messageId,
+              org_id,
+            };
+            await saveEmailToDB(emailData, org_id);
+          });
+        });
 
-//   imap.once('error', (err) => {
-//     console.error('IMAP error:', err);
-//   });
+        fetch.once("end", () => {
+          console.log("\nAll new emails fetched for today.");
+          imap.end();
+        });
+      });
+    });
+  });
 
-//   imap.once('end', () => {
-//     console.log('IMAP connection closed.');
-//   });
-//   imap.connect();
-// }
-// fetchEmails();
+  imap.once("error", (err) => {
+    console.error("IMAP error:", err);
+  });
+
+  imap.once("end", () => {
+    console.log("IMAP connection closed.");
+  });
+
+  imap.connect();
+}
+
+const fetchAllMails = async () => {
+  const getALLOrgs = await Organization.findAll();
+  if (!getALLOrgs) {
+    console.error("getting error in fetchAllMails")
+  }
+  getALLOrgs.forEach((org) => {
+    const userEmail = org?.email;
+    const userPassword = org?.gmail_app_password;
+    const imapConfig = {
+      user: userEmail,
+      password: userPassword,
+      host: "imap.gmail.com",
+      port: 993,
+      tls: true,
+      tlsOptions: {
+        rejectUnauthorized: false,
+      },
+    };
+    const imap = new Imap(imapConfig);
+    const org_id = org?.org_id;
+    emailController(org_id, imap)
+  });
+};
+
+fetchAllMails();

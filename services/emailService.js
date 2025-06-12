@@ -12,11 +12,12 @@ async function saveEmailToDB(emailData) {
     status,
     created_at,
     received_at,
-    email_message_id
+    email_message_id,
+    org_id
   } = emailData;
 
   const resp_id = uuidv4();
-  const org_id = '11111111-1111-1111-1111-111111111111';
+  // const org_id = '11111111-1111-1111-1111-111111111111';
   
   const emailMatch = from_email?.match(/<([^>]+)>/);
   if (emailMatch && emailMatch[1]) {
