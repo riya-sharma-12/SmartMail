@@ -5,7 +5,8 @@ const {authenticateToken} = require('../middlewares/auth');
 
 router.get('/getAllEmails', authenticateToken, getAllEmails);
 
-router.post('/getAllEmailsBySubjs', getAllEmailsBySubjs)
+router.post('/getAllEmailsBySubjs', authenticateToken, getAllEmailsBySubjs);
+
 
 //new
 router.post('/botChat', botChat)

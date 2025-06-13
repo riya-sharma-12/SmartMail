@@ -113,7 +113,7 @@ exports.requestSignup = async (req, res) => {
 };
 
 exports.verifySignup = async (req, res) => {
-  const { org_name, email, password, gmail_app_password, otp } = req.body;
+  const { email, password, gmail_app_password, otp } = req.body;
   try {
     // 1. Check OTP
     const result = await pool.query(
@@ -156,7 +156,7 @@ exports.verifySignup = async (req, res) => {
       INSERT INTO organizations (org_name, email, password, gmail_app_password, token, is_verified, created_at)
       VALUES ($1, $2, $3, $4, $5, true, NOW())
     `,
-      [org_name, email, hashedPassword, encryptedAppPassword, token]
+      [ email, hashedPassword, encryptedAppPassword, token]
     );
 
     // 4. Clean up OTP entry

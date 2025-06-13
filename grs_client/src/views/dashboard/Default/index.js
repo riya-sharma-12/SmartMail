@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Box, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import { CustomGetApi } from 'api';
 import { Toaster, toast } from 'react-hot-toast';
 // project imports
 //import EarningCard from './EarningCard';
-import PopularCard from './PopularCard';
 import TotalEmailLineChartCard from './TotalOrderLineChartCard';
 import TotalIncomeDarkCard from './TotalIncomeDarkCard';
 import TotalIncomeLightCard from './TotalIncomeLightCard';
@@ -12,7 +11,6 @@ import TotalGrievanceBarChart from './TotalGrievanceBarChart';
 import { gridSpacing } from 'store/constant';
 import BackDrop from 'views/utilities/BackDrop';
 import ChatBotCard from './chart-data/chatBotCard'; // Adjust path if needed grs_client\src\views\dashboard\Default\chart-data\chatBotCard.js
-import { maxHeight } from '@mui/system';
 
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
@@ -48,7 +46,10 @@ const Dashboard = () => {
   const [allEmails, setAllEmails] = useState([]);
 
   //console.log(grievanceCurrYearMonthlyStats)
-
+console.log(grievanceStats);
+console.log(currentYearGrie);
+console.log(previousYearGrie);
+console.log(grievanceYearlyStats);
   const getDashboardData = async () => {
     try {
       setLoadingOverlay(true);
@@ -180,31 +181,34 @@ console.log('llmRepliedMails Count:', llmRepliedMails);
         convetObjArray(setGrievanceYearlyStats, grievanceYearlyStatsData);
         setAllMailsStats(allEmailsStats);
         //convetObjArray(setGrievanceCurrYearMonthlyStats, grievanceCurrYearMonthlyStatsData);
-        grievanceYearlyStatsData.map((item) => {
-          //console.log(item,currentMonth, "check");
-          if (item?.month == currentMonth) {
-            setCurrentYearGrie(item);
-          } else {
-            setPreviousYearGrie(item);
-          }
-        });
+        if (Array.isArray(grievanceYearlyStatsData)) {
+  grievanceYearlyStatsData.map((item) => {
+    if (item?.month == currentMonth) {
+      setCurrentYearGrie(item);
+    } else {
+      setPreviousYearGrie(item);
+    }
+  });
+}
+
         let grieBarInitialData = [...griesBarData];
         let compsBarInitialData = [...compsBarData];
         let querysBarInitialData = [...querysBarData];
         let resolvedGrieBarInitialData = [...resolvedGrieBarData];
-        grievanceCurrYearMonthlyStatsData.map((item) => {
-          const month = item.month - 1;
-          grieBarInitialData[month] = item.total_grievance;
-          setGriesBarData(grieBarInitialData);
-          compsBarInitialData[month] = item.total_complains;
-          setCompsBarData(compsBarInitialData);
-          querysBarInitialData[month] = item.total_query;
-          setQuerysBarData(querysBarInitialData);
-          resolvedGrieBarInitialData[month] = item.grievance_resolved;
-          setResolvedGrieBarData(resolvedGrieBarInitialData);
-        });
-      }
-    } catch (err) {
+       if (Array.isArray(grievanceCurrYearMonthlyStatsData)) {
+  grievanceCurrYearMonthlyStatsData.map((item) => {
+    const month = item.month - 1;
+    grieBarInitialData[month] = item.total_grievance;
+    setGriesBarData(grieBarInitialData);
+    compsBarInitialData[month] = item.total_complains;
+    setCompsBarData(compsBarInitialData);
+    querysBarInitialData[month] = item.total_query;
+    setQuerysBarData(querysBarInitialData);
+    resolvedGrieBarInitialData[month] = item.grievance_resolved;
+    setResolvedGrieBarData(resolvedGrieBarInitialData);
+  });
+}}}
+catch (err) {
       //console.log("catch error", err)
       toast.error(`Something Went Wrong!, Getting Exception, ${err}`);
     } finally {

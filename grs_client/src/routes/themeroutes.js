@@ -14,5 +14,6 @@ useEffect(() => {
 }, []);
 
   const routes = userAuth === '1' ? [caraAdminRoutes] : [defaultRoutes];
+  
   return useRoutes(routes);
 }

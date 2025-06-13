@@ -15,7 +15,7 @@ import PopupState, { bindPopper, bindToggle } from 'material-ui-popup-state';
 import Transitions from 'ui-component/extended/Transitions';
 
 // assets
-import { IconAdjustmentsHorizontal, IconSearch, IconX } from '@tabler/icons';
+import { IconSearch } from '@tabler/icons';
 import { shouldForwardProp } from '@mui/system';
 import { CustomPostApi } from 'api';
 
@@ -230,7 +230,7 @@ const columns = [
 
 
 
-const MobileSearch = ({ searchValue, setSearchValue, handleKeyPress, popupState }) => {
+const MobileSearch = ({ searchValue, setSearchValue, handleKeyPress }) => {
   const theme = useTheme();
 
   return (
@@ -284,7 +284,6 @@ const MobileSearch = ({ searchValue, setSearchValue, handleKeyPress, popupState 
 MobileSearch.propTypes = {
   value: PropTypes.string,
   setValue: PropTypes.func,
-  popupState: PopupState
 };
 
 // ==============================|| SEARCH INPUT ||============================== //
@@ -401,6 +400,7 @@ const SearchSection = () => {
               </PopperStyle>
             </>
           )}
+
         </PopupState>
       </Box>
       <Box sx={{ display: { xs: 'none', md: 'block' } }}>

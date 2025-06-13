@@ -28,7 +28,7 @@ import {
 } from '@mui/material';
 
 // third-party
-import PerfectScrollbar from 'react-perfect-scrollbar';
+// import PerfectScrollbar from 'react-perfect-scrollbar';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -56,7 +56,7 @@ const ProfileSection = () => {
   //const [sdm, setSdm] = useState(true);
   //const [value, setValue] = useState('');
   //const [notification, setNotification] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [selectedIndex] = useState(-1);
   const [open, setOpen] = useState(false);
   /**
    * anchorRef is used on different componets and specifying one type leads to other components throwing an error
@@ -76,14 +76,14 @@ const ProfileSection = () => {
     setOpen(false);
   };
 
-  const handleListItemClick = (event, index, route = '') => {
-    setSelectedIndex(index);
-    handleClose(event);
+  // const handleListItemClick = (event, index, route = '') => {
+  //   setSelectedIndex(index);
+  //   handleClose(event);
 
-    if (route && route !== '') {
-      navigate(route);
-    }
-  };
+  //   if (route && route !== '') {
+  //     navigate(route);
+  //   }
+  // };
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -192,9 +192,9 @@ const ProfileSection = () => {
                       }}
                     /> */}
                     <Divider />
-                  </Box>
-                  <PerfectScrollbar style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}>
-                    <Box sx={{ p: 2 }}>
+                  {/* </Box> */}
+                  {/* <PerfectScrollbar style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}> */}
+                    {/* <Box> */}
                       {/* <UpgradePlanCard />
                       <Divider />
                       <Card
@@ -256,16 +256,20 @@ const ProfileSection = () => {
                           }
                         }}
                       >
-                        <ListItemButton
+                        {/* <ListItem button onClick={(e) => handleListItemClick(e, 1, '/dashboard')}>
+  <ListItemText primary="Dashboard" />
+</ListItem> */}
+
+                        {/* <ListItemButton
                           sx={{ borderRadius: `${customization.borderRadius}px` }}
                           selected={selectedIndex === 0}
                           onClick={(event) => handleListItemClick(event, 0, '#')}
-                        >
-                          <ListItemIcon>
+                        > */}
+                          {/* <ListItemIcon>
                             <IconSettings stroke={1.5} size="1.3rem" />
-                          </ListItemIcon>
-                          <ListItemText primary={<Typography variant="body2">Account Settings</Typography>} />
-                        </ListItemButton>
+                          </ListItemIcon> */}
+                          {/* <ListItemText primary={<Typography variant="body2">Account Settings</Typography>} /> */}
+                        {/* </ListItemButton> */}
                         {/* <ListItemButton
                           sx={{ borderRadius: `${customization.borderRadius}px` }}
                           selected={selectedIndex === 1}
@@ -306,7 +310,7 @@ const ProfileSection = () => {
                         </ListItemButton>
                       </List>
                     </Box>
-                  </PerfectScrollbar>
+                  {/* </PerfectScrollbar> */}
                 </MainCard>
               </ClickAwayListener>
             </Paper>
