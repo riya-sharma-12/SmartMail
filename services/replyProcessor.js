@@ -9,6 +9,7 @@ const db = require('../config/db');
 const { generateReply } = require('./ollamaReply');
 
 async function processReplies(batchSize = 5) {
+  console.log('-------ProcessReplies: called at-------', new Date().toLocaleString());
   const todayStart = startOfDay(new Date());
   const todayEnd = endOfDay(new Date());
   let emails = await Email.findAll({
@@ -36,14 +37,46 @@ async function processReplies(batchSize = 5) {
   }
 
   console.log(`Found ${emails.length} emails to draft replies for.`);
-  emails = [emails[0]];
+  // emails = [emails[0]]; to check for only 1 mail
   // Step 2: Generate and save replies
-  const drafts = await Promise.allSettled(
-    emails.map(async (email) => {
-      const prompt = `
-You are an assistant who drafts email replies for Riya (the recipient).
+//   const drafts = await Promise.allSettled(
+//     emails.map(async (email) => {
+//       const prompt = `
+// You are an assistant who drafts email replies for Riya (the recipient).
+// Read the incoming email between the <<EMAIL>> markers,
+// then write a short, polite reply **from Riya's perspective**.
+// Do NOT repeat the original text.
+// End your draft with "<END_REPLY>".
+
+// <<EMAIL>>
+// Subject: ${email.subject}
+
+// ${email.body}
+// <<EMAIL>>
+
+// Draft reply:
+// `.trim();
+
+const drafts = await Promise.allSettled(
+  emails.map(async (email) => {
+    const { from_email, subject = '', body = '' } = email;
+
+    // Skip if any field includes 'noreply'
+    const isNoReply = [from_email, subject, body].some((field) =>
+      field?.toLowerCase().includes('noreply')
+    );
+
+    if (isNoReply) {
+      console.log(`⏩ Skipping noreply email: ${subject}`);
+      return `Skipped noreply: ${subject}`;
+    }
+    const recipientEmail = email.to_email || userEmail || 'User'; // fallback if missing
+    const recipientName = recipientEmail.split('@')[0]; // e.g., "riya" from "riya@gmail.com"
+
+    const prompt = `
+You are an assistant drafting email replies for ${recipientName} (${recipientEmail}).
 Read the incoming email between the <<EMAIL>> markers,
-then write a short, polite reply **from Riya's perspective**.
+then write a short, polite reply **from ${recipientName}'s perspective**.
 Do NOT repeat the original text.
 End your draft with "<END_REPLY>".
 

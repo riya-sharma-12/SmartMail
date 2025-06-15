@@ -1,6 +1,6 @@
 import { lazy } from 'react';
 import Loadable from 'ui-component/Loadable';
-import MinimalLayout from 'layout/MinimalLayout';
+// import MinimalLayout from 'layout/MinimalLayout';
 
 const Login = Loadable(lazy(() => import('views/pages/authentication/login')));
 const Signup = Loadable(lazy(() => import('views/pages/authentication/signup')));

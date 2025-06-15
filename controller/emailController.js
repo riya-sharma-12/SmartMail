@@ -4,6 +4,7 @@ const Imap = require("imap");
 const { Email, Organization } = require("../models/index");
 const { saveEmailToDB } = require("../services/emailService");
 const { categorizeEmail } = require("../services/categorizeEmails");
+const { processReplies } = require("../services/replyProcessor");
 
 function emailController(org_id, imap) {
   imap.once("ready", () => {
@@ -41,11 +42,20 @@ function emailController(org_id, imap) {
             console.log("Date:", parsed.date);
             console.log("Body:", parsed.text?.slice(0, 300) || "[No Text]");
 
+            const exists = await Email.findOne({
+              where: { email_message_id: parsed?.messageId },
+            });
+            if (exists) {
+              console.log(`Skipping duplicate email: ${parsed?.messageId}`);
+              return;
+            }
+
             const category = categorizeEmail({
               subject: parsed.subject || "",
               body: parsed.text || "",
             });
-
+const parsedDate = new Date(parsed.date);
+const receivedAt = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
             const emailData = {
               from_email: parsed.from.text,
               subject: parsed.subject || "[No Subject]",
@@ -53,7 +63,7 @@ function emailController(org_id, imap) {
               category: category,
               status: 0,
               created_at: new Date(),
-              received_at: parsed.date || new Date(),
+received_at: receivedAt,
               email_message_id: parsed?.messageId,
               org_id,
             };
@@ -83,7 +93,7 @@ function emailController(org_id, imap) {
 const fetchAllMails = async () => {
   const getALLOrgs = await Organization.findAll();
   if (!getALLOrgs) {
-    console.error("getting error in fetchAllMails")
+    console.error("getting error in fetchAllMails");
   }
   getALLOrgs.forEach((org) => {
     const userEmail = org?.email;
@@ -100,11 +110,13 @@ const fetchAllMails = async () => {
     };
     const imap = new Imap(imapConfig);
     const org_id = org?.org_id;
-    emailController(org_id, imap)
+    console.log('-------FetchAllMails: started at-------', new Date().toLocaleString());
+    emailController(org_id, imap);
   });
+
+  await processReplies(); 
 };
 
 // fetchAllMails();
 
-
-module.exports = {fetchAllMails}
+module.exports = { fetchAllMails };

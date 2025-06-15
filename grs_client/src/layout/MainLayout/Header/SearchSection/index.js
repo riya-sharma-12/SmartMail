@@ -505,7 +505,7 @@ const SearchSection = () => {
                 <DataGrid
                   rows={allgrievanceReplyLog}
                   columns={columns}
-                  getRowId={(row) => row.id}
+  getRowId={(row) => row.email_token} 
                   initialState={{
                     pagination: {
                       paginationModel: { page: 0, pageSize: 10 },

@@ -1,8 +1,21 @@
 const cron = require('node-cron');
-const { exec } = require('child_process');
+const { fetchAllMails } = require('./controller/emailController');
 
-// Run every day at 12:00 AM and 6:00 PM
-cron.schedule('0 0,18 * * *', () => {
-  console.log(`[${new Date().toLocaleString()}] Running email fetcher...`);
-  exec('node fetchEmails.js');
-});
+function startCronJobs() {
+  // cron.schedule('0 10 * * *', async () => {
+  //   console.log('Running scheduled job: 10 AM mail fetch');
+  //   await fetchAllMails();
+  // });
+
+  // every minute for testing
+  // cron.schedule('* * * * *', async () => {
+  //   console.log('⏰ Running test job: Fetching emails + processing replies...');
+  //   await fetchAllMails();
+  // });
+  // cron.schedule('0 18 * * *', async () => {
+  //   console.log('Running scheduled job: 6 PM mail fetch');
+  //   await fetchAllMails();
+  // });
+}
+
+module.exports = { startCronJobs };

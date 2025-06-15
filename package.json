@@ -29,5 +29,10 @@
     "react-apexcharts": "^1.7.0",
     "sequelize": "^6.37.7",
     "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.27.4",
+    "@babel/preset-env": "^7.27.2",
+    "@babel/preset-react": "^7.27.1"
   }
 }

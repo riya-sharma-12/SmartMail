@@ -7,23 +7,31 @@ import MainLayout from 'layout/MainLayout';
 //const RegisterGrievanceTemp = Loadable(lazy(() => import('views/Grievance/Grievance_Register/Register')));
 // Cara Super-Admin Routing
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
-//const RegisterNewUser = Loadable(lazy(() => import('views/caraSuperAdminViews/registerNewUser')));
-//const ViewAllCaraUsers = Loadable(lazy(() => import('views/caraSuperAdminViews/viewAllCaraUsers')));
-// const RegisterGrievance = Loadable(lazy(() => import('views/caraSuperAdminViews/registerGrievance')));
+const Login = Loadable(lazy(() => import('views/pages/authentication/login')));
+// const RegisterNewUser = Loadable(lazy(() => import('views/caraSuperAdminViews/registerNewUser')));
 // grievances reports
-const AllGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/allEmails')));
-const DistGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/topPriorityMails')));
-// const PushedbackGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/pushedbackGrievancesView')));
-const ResolvedGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/newEmailsView')));
-const RepliedEmailView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/repliedEmailView')));
+const AllEmails = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/allEmails')));
+const TopPriorityMails = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/topPriorityMails')));
+const RepliedEmailsView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/repliedEmailView')));
+const NewEmailsView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/newEmailsView')));
 // const ClosedGrievancesView = Loadable(lazy(() => import('views/caraSuperAdminViews/grievancesReports/closedGrievancesView')));
 // ==============================|| Cara Super-Admin ROUTING ||============================== //
-
-const caraAdminRoutes = {
+const caraSuperAdminRoutes = {
+  path: '/',
+  children: [
+    {
+      index: true,
+      element: <Login />
+    },
+    {
+      path: 'login',
+      element: <Login />
+    },
+{
     path: '/',
     element: <MainLayout />,
     children: [
-        {
+         {
             index: true,  // 👈 this tells React Router to render this at "/"
             element: <DashboardDefault />
         },
@@ -31,31 +39,23 @@ const caraAdminRoutes = {
             path: '/dashboard',
             element: <DashboardDefault />
         },
-        // {
-        //     path: '/regnewgrievance',
-        //     element: <RegisterGrievance />
-        // },
         {
             path: '/all-emails',
-            element: <AllGrievancesView />
+            element: <AllEmails />
         },
         {
             path: '/top-priority-emails',
-            element: <DistGrievancesView />
-        },
-        // {
-        //     path: '/reports/pushbackedgrievanes',
-        //     element: <PushedbackGrievancesView />
-        // },
-        {
-            path: '/new-emails',
-            element: <ResolvedGrievancesView />
+            element: <TopPriorityMails />
         },
         {
             path: '/replied-emails',
-            element: <RepliedEmailView />
-        }
+            element: <RepliedEmailsView />
+        },
+        {
+            path: '/new-emails',
+            element: <NewEmailsView />
+        }]}
     ]
 };
 
-export default caraAdminRoutes;
+export default caraSuperAdminRoutes;

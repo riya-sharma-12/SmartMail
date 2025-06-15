@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { CustomPostApi } from 'api'; 
 import { TextField, Button, Typography, Paper } from '@mui/material';
 
 const VerifySignup = () => {
@@ -17,22 +17,26 @@ const VerifySignup = () => {
       navigate('/signup');
     }
   }, [navigate]);
+const handleVerify = async () => {
+  try {
+    const { data, error } = await CustomPostApi('/auth/verify-signup', {
+      ...signupData,
+      otp,
+    });
 
-  const handleVerify = async () => {
-    try {
-      const res = await axios.post('/auth/verify-signup', {
-        ...signupData,
-        otp
-      });
-
-      // Success: remove temp data
-      localStorage.removeItem('pendingSignup');
-      alert('Verification successful! You can now log in.');
-      navigate('/login');
-    } catch (err) {
+    if (error) {
       alert('Verification failed. Check OTP and try again.');
+      return;
     }
-  };
+
+    localStorage.removeItem('pendingSignup');
+    alert('Verification successful! You can now log in.');
+    navigate('/login');
+  } catch (err) {
+    console.error(err);
+    alert('Something went wrong during verification.');
+  }
+};
 
   return (
     <Paper elevation={3} sx={{ p: 4, maxWidth: 400, mx: 'auto', mt: 10 }}>

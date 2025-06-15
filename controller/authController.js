@@ -103,7 +103,7 @@ exports.requestSignup = async (req, res) => {
       subject: "Your OTP for SmartMail Signup",
       text: `Your OTP is ${otp}. It expires in 10 minutes.`,
     });
-    console.log("Sending OTP to:", email);
+    // console.log("Sending OTP to:", email);
 
     res.status(200).json({ message: "OTP sent to email" });
   } catch (err) {
@@ -136,15 +136,15 @@ exports.verifySignup = async (req, res) => {
       .digest();
 
     // Generate a random 16-byte IV
-    const iv = crypto.randomBytes(16);
+    // const iv = crypto.randomBytes(16);
 
-    // Encrypt the Gmail app password
-    const cipher = crypto.createCipheriv("aes-256-ctr", key, iv);
-    let encrypted = cipher.update(gmail_app_password, "utf8", "hex");
-    encrypted += cipher.final("hex");
+    // // Encrypt the Gmail app password
+    // const cipher = crypto.createCipheriv("aes-256-ctr", key, iv);
+    // let encrypted = cipher.update(gmail_app_password, "utf8", "hex");
+    // encrypted += cipher.final("hex");
 
-    // Store both IV and encrypted string (joined with ':')
-    const encryptedAppPassword = iv.toString("hex") + ":" + encrypted;
+    // // Store both IV and encrypted string (joined with ':')
+    // const encryptedAppPassword = iv.toString("hex") + ":" + encrypted;
 
     const token = jwt.sign({ email }, process.env.JWT_SECRET, {
       expiresIn: "2h",
@@ -153,10 +153,10 @@ exports.verifySignup = async (req, res) => {
     // 3. Store in organizations
     await pool.query(
       `
-      INSERT INTO organizations (org_name, email, password, gmail_app_password, token, is_verified, created_at)
-      VALUES ($1, $2, $3, $4, $5, true, NOW())
+      INSERT INTO organizations (email, password, gmail_app_password, token, is_verified, created_at)
+      VALUES ($1, $2, $3, $4, true, NOW())
     `,
-      [ email, hashedPassword, encryptedAppPassword, token]
+      [ email, hashedPassword, gmail_app_password, token]
     );
 
     // 4. Clean up OTP entry

@@ -12,7 +12,7 @@ import {  CustomGetApi } from 'api';
 const ResolvedGrievancesView = () => {
     const [loadingOverlay, setLoadingOverlay] = useState(false);
     const [allGrievances, setAllGrievances] = useState([]);
-    // const [caraDepts, setCaraDepts] = useState([]);
+    const [caraDepts, setCaraDepts] = useState([]);
 
     const columns = [
          {

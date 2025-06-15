@@ -138,7 +138,7 @@ import {
   CircularProgress,
   Paper
 } from '@mui/material';
-import axios from 'axios';
+import { CustomPostApi} from 'api';
 
 const ChatBotCard = () => {
   const [userInput, setUserInput] = useState('');
@@ -152,7 +152,7 @@ const ChatBotCard = () => {
     setUserInput('');
     setLoading(true);
     try {
-      const { data } = await axios.post('http://localhost:5000/api/admin/botChat', { userPrompt: userInput });
+      const { data } = await CustomPostApi('http://localhost:5000/api/admin/botChat', { userPrompt: userInput });
       const botText = data.success ? data.response : 'Something went wrong with the bot.';
       setMessages((prev) => [...prev, { sender: 'bot', text: botText }]);
     } catch {

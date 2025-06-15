@@ -70,19 +70,6 @@ const ResolvedGrievancesView = () => {
       width: 135,
       valueGetter: (params) => (params.row.email_status === 0 ? 'Not Replied' : 'Reply Sent')
     },
-    {   field: 'email_created_at',
-  headerName: 'Created At',
-  type: 'dateTime',
-  width: 180,
-  valueFormatter: (params) => {
-    const date = new Date(params.value);
-    return date.toLocaleString(undefined, {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    });
-  },
-}
-,
      { field: 'email_received_at', headerName: 'Received At', type: 'dateTime',
   width: 180,
   valueFormatter: (params) => {
@@ -92,6 +79,19 @@ const ResolvedGrievancesView = () => {
       timeStyle: 'short',
     });
   }, },
+  {
+  field: 'email_created_at',
+  headerName: 'Fetched At',
+  type: 'dateTime',
+  width: 180,
+  valueFormatter: (params) => {
+    const date = new Date(params.value);
+    return date.toLocaleString(undefined, {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    });
+  },
+},
 {
   field: 'llm_reply',
   headerName: 'LLM Reply',
@@ -136,26 +136,26 @@ const ResolvedGrievancesView = () => {
         }
     }
 
-    const getAllCaraDepts = async () => {
-        try {
-            setLoadingOverlay(true);
-            const { data, error } = await CustomGetApi('/admin/getAllEmails');
-            if (!data) toast.error(`Failed!, ${error}`)
-            else {
-                //console.log(data);
-                toast.success(`Success!, ${data?.msg}`)
-                setCaraDepts(data?.allCaraDepts);
-            }
-        } catch (err) {
-            toast.error(`Something Went Wrong!, Getting Exception, ${err}`);
-        } finally {
-            setLoadingOverlay(false);
-        }
-    }
+    // const getAllCaraDepts = async () => {
+    //     try {
+    //         setLoadingOverlay(true);
+    //         const { data, error } = await CustomGetApi('/admin/getAllEmails');
+    //         if (!data) toast.error(`Failed!, ${error}`)
+    //         else {
+    //             //console.log(data);
+    //             toast.success(`Success!, ${data?.msg}`)
+    //             setCaraDepts(data?.allCaraDepts);
+    //         }
+    //     } catch (err) {
+    //         toast.error(`Something Went Wrong!, Getting Exception, ${err}`);
+    //     } finally {
+    //         setLoadingOverlay(false);
+    //     }
+    // }
 
     useEffect(() => {
         getAllGrievances();
-        getAllCaraDepts();
+        // getAllCaraDepts();
     }, [])
     return (
         <Grid container spacing={gridSpacing}>

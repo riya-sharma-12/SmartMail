@@ -23,7 +23,7 @@ const getAllEmails = async (req, res) => {
     const formatted = emails.map(email => {
   const firstReply = email.Reply || {}; 
       return {
-        email_token: email.resp_id,  
+        email_token: email.resp_id,
         from_email: email.from_email,
         'email-subject': email.subject,
         'email-body': email.body,
@@ -34,7 +34,8 @@ const getAllEmails = async (req, res) => {
         reply_id: firstReply.reply_id, 
         llm_reply: firstReply.llm_reply || '',
         final_reply: firstReply.final_reply || '',
-        email_replied_at: firstReply.replied_at || ''
+        email_replied_at: firstReply.replied_at || '',
+        org_id: email.org_id
       };
     });
 
@@ -86,7 +87,8 @@ const getAllEmailsBySubjs = async (req, res) => {
         reply_id: firstReply.reply_id,
         llm_reply: firstReply.llm_reply || '',
         final_reply: firstReply.final_reply || '',
-        email_replied_at: firstReply.replied_at || ''
+        email_replied_at: firstReply.replied_at || '',
+        org_id: email.org_id
       };
     });
 

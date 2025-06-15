@@ -16,7 +16,7 @@
     "ajv": "^6.12.6",
     "ajv-dist": "^8.17.1",
     "ajv-keywords": "^3.5.2",
-    "apexcharts": "^3.35.3",
+    "apexcharts": "^4.0.0",
     "axios": "^1.6.2",
     "chart.js": "^4.4.9",
     "crypto-js": "^4.2.0",

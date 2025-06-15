@@ -1,13 +1,13 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const emailRoutes = require('./routes/emailRoutes');
-const { fetchAllMails } = require('./controller/emailController');
-const { server } = require('./controller/authController');
 const authRoutes = require('./routes/authRoutes');
-const { processReplies } = require('./services/replyProcessor');
+const { fetchAllMails } = require('./controller/emailController');
+// const { processReplies } = require('./services/replyProcessor');
 const adminRoutes = require('./routes/adminRoutes');
 const CORS = require('cors');
 const replyRoutes = require('./routes/replyRoutes');
+const { startCronJobs } = require('./scheduler');
 dotenv.config();
 
 const app = express();
@@ -20,6 +20,8 @@ app.use('/api/auth', authRoutes);
 
 app.listen(5000, async () => {
   console.log('Server running on http://localhost:5000 --');
-  // await fetchAllMails();
-  processReplies();
+  await fetchAllMails();
+  // processReplies();
 });
+
+startCronJobs();

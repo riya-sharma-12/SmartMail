@@ -26,13 +26,16 @@ async function saveReply(req, res) {
         return res.status(404).json({ success: false, msg: 'Email not found for given resp_id' });
       }
 
+      const org = await Organization.findOne({ where: { email: req?.user?.email } });
+      if (!org) return res.status(404).json({ success: false, msg: 'User not found' });
+
       const newReply = await Reply.create({
         reply_id: uuidv4(),
         llm_reply: 'NA',
         final_reply,
         replied_at: new Date(),
         resp_id: email.resp_id,
-        org_id: '11111111-1111-1111-1111-111111111111' // Replace with actual org_id if dynamic
+        org_id: org.org_id
       });
 
       return res.status(201).json({ success: true, msg: 'Reply created successfully', reply_id: newReply.reply_id });
@@ -49,10 +52,6 @@ const extractEmailAddress = (fullFromField) => {
   return match ? match[1] : fullFromField;
 };
 
-// Decrypt app password
-const decrypt = (encrypted) => {
-  return crypto.createDecipher('aes-256-ctr', process.env.JWT_SECRET).update(encrypted, 'hex', 'utf8');
-};
 
 // Send reply via email
 const sendReplyEmail = async (req, res) => {

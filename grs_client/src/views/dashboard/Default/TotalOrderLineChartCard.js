@@ -17,7 +17,7 @@ import CustomChartData from './chart-data/custom-chart-bar';
 import EarningIcon from 'assets/images/icons/earning.svg';
 //import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { all } from 'axios';
+// import { all } from 'axios';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: theme.palette.primary.dark,
@@ -77,7 +77,7 @@ const TotalOrderLineChartCard = ({ isLoading, title, grievanceComplains, grievan
     xAxisArrayOfMails = [];
     xAxisArrayOfReplied = [];
     console.log('allMailsData', allMailsData);
-    allMailsData?.map((item, index) => {
+    allMailsData?.map((item) => {
       console.log('date', item);
       xAxisArrayOfMails.push(item['date']);
       allMailsByDay.push(item['count']);
