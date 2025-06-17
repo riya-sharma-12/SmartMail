@@ -60,10 +60,8 @@ const Header = ({ handleLeftDrawerToggle }) => {
 
       {/* header search */}
       <SearchSection />
-      {/* Grievance Redressal System text */}
       <Box sx={{ flexGrow: 1, textAlign: 'center' }}>
         <Typography variant="h2" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
-          {/* {isMobile ? 'GRS' : 'Grievance Redressal System'} */}
           Smart Email Responder
         </Typography>
       </Box>

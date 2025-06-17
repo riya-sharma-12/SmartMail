@@ -3,7 +3,20 @@
 
 
 const CustomChartData = (title, xAxisLabel, seriesName, categories, data) => {
-    console.log("check --", title, categories, data)
+    console.log("check --", title, categories, data);
+
+  const safeData = Array.isArray(data) ? data : [];
+  const maxVal = Math.max(...safeData, 10);
+
+  // Choose step size based on range
+  let step = 10;
+  if (maxVal > 50 && maxVal <= 100) step = 20;
+  else if (maxVal > 100 && maxVal <= 200) step = 50;
+  else if (maxVal > 200) step = 100;
+
+  const roundedMax = Math.ceil(maxVal / step) * step;
+  const tickAmount = Math.ceil(roundedMax / step);
+
     return {
         type: 'line',
   height: 350, // Increased height for better axis visibility
@@ -39,18 +52,13 @@ const CustomChartData = (title, xAxisLabel, seriesName, categories, data) => {
     enabled: false  // ✅ This disables the mini floating x-label
   }
     },
-    yaxis: {
-      min: 0,
-      max: 100,
-      title: {
-        text: title
+     yaxis: {
+        min: 0,
+        max: roundedMax,
+        tickAmount: tickAmount,
+        title: { text: title },
+        labels: { style: { colors: '#fff' } }
       },
-      labels: {
-        style: {
-          colors: '#fff'
-        }
-      }
-    },
     tooltip: {
       theme: 'dark',
       x: {
@@ -66,12 +74,12 @@ const CustomChartData = (title, xAxisLabel, seriesName, categories, data) => {
       }
     }
   },
-  series: [
-    {
-      name: seriesName,
-      data: data // These are sample mail counts for Jan–Aug
-    }
-  ]
+ series: [
+      {
+        name: seriesName,
+        data: safeData
+      }
+    ]
     };
 };
 

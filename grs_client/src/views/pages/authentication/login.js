@@ -23,6 +23,7 @@ const Login = () => {
     try {
       const res = await axios.post('/auth/login', { email, password });
       const { token, org_id } = res.data;
+      localStorage.setItem('userEmail', email);
       localStorage.setItem('token', token);
       localStorage.setItem('authToken', token);
       await axios.get('http://localhost:5000/api/emails/fetch-emails', {

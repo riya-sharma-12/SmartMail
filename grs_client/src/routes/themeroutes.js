@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRoutes } from 'react-router-dom';
 
 import defaultRoutes from './defaultRoutes';
-import caraAdminRoutes from './caraAdmin';
+import menuItemRoutes from './menuItems';
 
 export default function ThemeRoutes() {
   const [userAuth, setUserAuth] = useState('0');
@@ -13,7 +13,7 @@ useEffect(() => {
   setUserAuth(stored);
 }, []);
 
-  const routes = userAuth === '1' ? [caraAdminRoutes] : [defaultRoutes];
+  const routes = userAuth === '1' ? [menuItemRoutes] : [defaultRoutes];
   
   return useRoutes(routes);
 }

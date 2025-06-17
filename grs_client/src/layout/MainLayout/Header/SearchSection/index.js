@@ -60,30 +60,7 @@ const HeaderAvatarStyle = styled(Avatar, { shouldForwardProp })(({ theme }) => (
   }
 }));
 
-
-// const initialGrievanceDetailForm = {
-//   'email_token': "",
-//   'applicant_email_id': "",
-//   'mail_message_id': "",
-//   'grievance_mail_subject': "",
-//   'grievance_mail_body': "",
-//   'applicant_name': "",
-//   'applicant_gender': "",
-//   'applicant_regno': "",
-//   'applicant_state_code': "",
-//   'applicant_district_code': "",
-//   'grievance_category': "",
-//   'grievance_type': "",
-//   'grievance_from': "",
-//   'internal_remark': "",
-//   'grievance_status': "",
-//   'grievance_entry_date': "",
-//   'dept_id': "",
-//   'dept_name': ""
-// }
-
 const columns = [
-  // { field: 'id', headerName: 'S.NO', width: 200 },
    {
       field: 'from_email',
       headerName: 'Email From',
@@ -98,7 +75,6 @@ const columns = [
   headerName: 'Subject',
   width: 200,
 
-  // Custom sort comparator to remove quotes before comparison
   sortComparator: (v1, v2) => {
     const clean = (val) =>
       (val || '').replace(/^[“"']|[”"']$/g, '').toLowerCase();
@@ -110,10 +86,6 @@ const columns = [
   field: 'email-body',
   headerName: 'Body',
   width: 200,
-
-  // ✅ Show the original unmodified value — NO valueFormatter
-
-  // ✅ Sort using cleaned value (remove leading non-alphanumerics)
   sortComparator: (v1, v2) => {
     const clean = (val) =>
       (val || '').replace(/^[^a-zA-Z0-9]+/, '').trim().toLowerCase();
@@ -130,7 +102,7 @@ const columns = [
     if (value === 'top-priority') return 'Top Priority';
     if (value === 'less-priority') return 'Less Priority';
     if (value === 'spam') return 'Spam Mail';
-    return value; // default fallback
+    return value; 
   }
 },
     {
@@ -196,18 +168,6 @@ const columns = [
 
     return clean(v1).localeCompare(clean(v2));
   },
-      // renderCell: (params) => (
-      //   <div
-      //     onDoubleClick={() => {
-      //       setSelectedEmail(params.row);
-      //       setEditedReply(params.value || '');
-      //       setEditDialogOpen(true);
-      //     }}
-      //     style={{ cursor: 'pointer'}}
-      //   >
-      //     {params.value}
-      //   </div>
-      // )
     },
    {
   field: 'email_replied_at',
@@ -246,35 +206,6 @@ const MobileSearch = ({ searchValue, setSearchValue, handleKeyPress }) => {
           <IconSearch stroke={1.5} size="1rem" color={theme.palette.grey[500]} />
         </InputAdornment>
       }
-      // endAdornment={
-      //   <InputAdornment position="end">
-      //     <ButtonBase sx={{ borderRadius: '12px' }}>
-      //       <HeaderAvatarStyle variant="rounded">
-      //         <IconAdjustmentsHorizontal stroke={1.5} size="1.3rem" />
-      //       </HeaderAvatarStyle>
-      //     </ButtonBase>
-      //     <Box sx={{ ml: 2 }}>
-      //       <ButtonBase sx={{ borderRadius: '12px' }}>
-      //         <Avatar
-      //           variant="rounded"
-      //           sx={{
-      //             ...theme.typography.commonAvatar,
-      //             ...theme.typography.mediumAvatar,
-      //             background: theme.palette.orange.light,
-      //             color: theme.palette.orange.dark,
-      //             '&:hover': {
-      //               background: theme.palette.orange.dark,
-      //               color: theme.palette.orange.light
-      //             }
-      //           }}
-      //           {...bindToggle(popupState)}
-      //         >
-      //           <IconX stroke={1.5} size="1.3rem" />
-      //         </Avatar>
-      //       </ButtonBase>
-      //     </Box>
-      //   </InputAdornment>
-      // }
       aria-describedby="search-helper-text"
       inputProps={{ 'aria-label': 'weight' }}
     />
@@ -292,10 +223,8 @@ const SearchSection = () => {
   const theme = useTheme();
   const [searchValue, setSearchValue] = useState('');
   const [loadingOverlay, setLoadingOverlay] = useState(false);
-  const [allgrievanceReplyLog, setAllGrievanceReplyLog] = useState([]);
-  //console.log(allgrievanceReplyLog)
+  const [conversationLog, setConversationLog] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
-  //const [grievanceDetails, setgrievanceDetails] = useState(initialGrievanceDetailForm);
 
 
   const handleClickopenDialog = () => {
@@ -304,8 +233,7 @@ const SearchSection = () => {
 
   const handleCloseopenDialog = () => {
     setOpenDialog(false);
-    //setgrievanceDetails(initialGrievanceDetailForm);
-    setAllGrievanceReplyLog([])
+    setConversationLog([])
   };
 
   const handleKeyPress = (e) => {
@@ -319,7 +247,7 @@ const SearchSection = () => {
     try {
       const email_subject = value;
       if (email_subject) {
-        grievanceReplyLog(value);
+        fetchEmails(value);
       } else {
         setOpenDialog(false);
         return toast.error('Invalid Email')
@@ -332,18 +260,16 @@ const SearchSection = () => {
   };
 
 
-  const grievanceReplyLog = async (emailSubject) => {
+  const fetchEmails = async (emailSubject) => {
     try {
       setLoadingOverlay(true);
       const apiData = { emailSubject: emailSubject }
-      const { data, error } = await CustomPostApi('/admin/getAllEmailsBySubjs', apiData);
+      const { data, error } = await CustomPostApi('/admin/getallEmailsBySubjs', apiData);
       if (!data) toast.error(`Failed!, ${error}`)
       else {
         toast.success(`Success!, ${data?.msg}`)
-        //const grievanceDetail = data?.data?.grievanceDetail;
-        const grievanceReplyHistory = data?.allGrievances;
-        //setgrievanceDetails(grievanceDetail);
-        setAllGrievanceReplyLog(grievanceReplyHistory)
+        const emailReplyHistory	 = data?.allEmails;
+        setConversationLog(emailReplyHistory)
         handleClickopenDialog()
       }
     } catch (err) {
@@ -409,22 +335,13 @@ const SearchSection = () => {
           value={searchValue}
           type='text'
           onChange={(e) => setSearchValue(e.target.value)}
-          onKeyDown={handleKeyPress} // Listen for key press event
+          onKeyDown={handleKeyPress} 
           placeholder="Search Email"
           startAdornment={
             <InputAdornment position="start">
               <IconSearch stroke={1.5} size="1rem" color={theme.palette.grey[500]} />
             </InputAdornment>
           }
-          // endAdornment={
-          //   <InputAdornment position="end">
-          //     <ButtonBase sx={{ borderRadius: '12px' }}>
-          //       <HeaderAvatarStyle variant="rounded">
-          //         <IconAdjustmentsHorizontal stroke={1.5} size="1.3rem" />
-          //       </HeaderAvatarStyle>
-          //     </ButtonBase>
-          //   </InputAdornment>
-          // }
           aria-describedby="search-helper-text"
           inputProps={{ 'aria-label': 'weight' }}
         />
@@ -438,72 +355,15 @@ const SearchSection = () => {
         <DialogActions>
           <Button onClick={handleCloseopenDialog}><CloseRoundedIcon /></Button>
         </DialogActions>
-        {/* <DialogTitle variant='h2'>Grievance Details of Token No -- {searchValue}</DialogTitle>
-        <Divider sx={{ marginBottom: '30px' }} /> */}
         <Grid container spacing={3}>
-          {/* User details form fields */}
-          {/* <Grid item lg={3} md={6} sm={12} xs={12}>
-            <TextField
-              name="applicant_name"
-              label="Grievancer Name"
-              fullWidth
-              value={grievanceDetails.applicant_name}
-              disabled
-            />
-          </Grid> */}
-          {/* User details form fields */}
-          {/* <Grid item lg={3} md={6} sm={12} xs={12}>
-            <TextField
-              name="applicant_email_id"
-              label="Grievancer Mail Id"
-              fullWidth
-              type='email'
-              value={grievanceDetails.applicant_name}
-              disabled
-            />
-          </Grid> */}
-          {/* User details form fields */}
-          {/* <Grid item lg={3} md={6} sm={12} xs={12}>
-            <TextField
-              name="grievance_mail_subject"
-              label="Grievancer Mail Subject"
-              fullWidth
-              value={grievanceDetails.applicant_name}
-              disabled
-            />
-          </Grid> */}
-          {/* <Grid item lg={3} md={6} sm={12} xs={12}>
-            <TextField
-              name="grievance_entry_date"
-              label="Grievancer Entry Date"
-              fullWidth
-              type='text'
-              value={grievanceDetails.applicant_name}
-              disabled
-            />
-          </Grid> */}
           <Grid item lg={12} md={12} sm={12} xs={12}>
             <DialogContent>
-              {/* <TextField
-                name="grievance_mail_body"
-                label="Grievance Mail Body"
-                autoFocus
-                required
-                margin="dense"
-                variant="standard"
-                fullWidth
-                multiline
-                rows={8}
-                disabled
-                value={grievanceDetails.applicant_name}
-              />
-              <Divider sx={{ marginTop: '50px' }} /> */}
               <DialogContentText variant='h2' sx={{ color: theme.palette.primary.main }}>
                 Emails Found:
               </DialogContentText>
               <Grid item lg={12} md={12} sm={12} xs={12}>
                 <DataGrid
-                  rows={allgrievanceReplyLog}
+                  rows={conversationLog}
                   columns={columns}
   getRowId={(row) => row.email_token} 
                   initialState={{
@@ -522,9 +382,7 @@ const SearchSection = () => {
                       color: "black",
                     },
                   }}
-                  //onRowClick={handleRowClick}
                   pageSizeOptions={[10, 20, 100]}
-                //checkboxSelection
                 />
               </Grid>
               <Divider />

@@ -1,24 +1,12 @@
-import registerGrievance from './registerGrievance';
+// Removed unused imports
+import userMenuItems from './menuItems';  // You can rename this file later if needed
 
-// new 
-import caraSuperAdmin from './caraSuperAdmin';
-import caraAdmin from './caraAdmin';
-import caraEmployees from './caraEmployees';
-// ==============================|| CARA Admin Level MENU ITEMS ||============================== //
+// ==============================|| Sidebar MENU ITEMS ||============================== //
 
-
-
-const menuItems = (userAuth) => {
-  const Sidebaritems = {
-    "0": [registerGrievance],
-    "1": [caraSuperAdmin],
-    "2": [caraAdmin],
-    "3": [caraEmployees],
-    "4": [registerGrievance],
-  }
+const menuItems = () => {
   return {
-    items: Sidebaritems[`${userAuth}`]
-  }
+    items: [userMenuItems]  // Only one role, so directly return
+  };
 };
 
 export default menuItems;

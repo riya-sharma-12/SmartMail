@@ -34,7 +34,7 @@ import {
 import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
 //import UpgradePlanCard from './UpgradePlanCard';
-import User1 from '../../../../assets/images/Gmail-Logo-2013-2020.png';
+// import User1 from '../../../../assets/images/Gmail-Logo-2013-2020.png';
 
 
 
@@ -47,10 +47,11 @@ const ProfileSection = () => {
   const theme = useTheme();
   const customization = useSelector((state) => state.customization);
   const userDetails = {
-    name: localStorage.getItem('userName') || 'user',
-    level: localStorage.getItem('userAuth') || 0,
-    dept: localStorage.getItem('userDept') || 0
-  }
+  name: localStorage.getItem('userEmail') || 'user',
+  level: localStorage.getItem('userAuth') || 0,
+  dept: localStorage.getItem('userDept') || 0
+}
+
   const navigate = useNavigate();
 
   //const [sdm, setSdm] = useState(true);
@@ -121,7 +122,7 @@ const ProfileSection = () => {
         }}
         icon={
           <Avatar
-            src={User1}
+            // src={User1}
             sx={{
               ...theme.typography.mediumAvatar,
               margin: '8px 0 8px 8px !important',
@@ -167,7 +168,7 @@ const ProfileSection = () => {
                   <Box sx={{ p: 2 }}>
                     <Stack>
                       <Stack direction="row" spacing={0.5} alignItems="center">
-                        <Typography variant="h4">Good Morning,</Typography>
+                        <Typography variant="h4">Welcome,</Typography>
                         <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
                           {userDetails.name}
                         </Typography>

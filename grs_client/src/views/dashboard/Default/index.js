@@ -7,7 +7,7 @@ import { Toaster, toast } from 'react-hot-toast';
 import TotalEmailLineChartCard from './TotalOrderLineChartCard';
 import TotalIncomeDarkCard from './TotalIncomeDarkCard';
 import TotalIncomeLightCard from './TotalIncomeLightCard';
-import TotalGrievanceBarChart from './TotalGrievanceBarChart';
+import TotalEmailBarChart from './TotalEmailBarChart';
 import { gridSpacing } from 'store/constant';
 import BackDrop from 'views/utilities/BackDrop';
 import ChatBotCard from './chart-data/chatBotCard'; // Adjust path if needed grs_client\src\views\dashboard\Default\chart-data\chatBotCard.js
@@ -43,7 +43,7 @@ const Dashboard = () => {
   const [compsBarData, setCompsBarData] = useState(barInitialData);
   const [querysBarData, setQuerysBarData] = useState(barInitialData);
   const [resolvedGrieBarData, setResolvedGrieBarData] = useState(barInitialData);
-  const [allEmails, setAllEmails] = useState([]);
+  const [allEmails, setallEmails] = useState([]);
 
   //console.log(grievanceCurrYearMonthlyStats)
 console.log(grievanceStats);
@@ -53,7 +53,7 @@ console.log(grievanceYearlyStats);
   const getDashboardData = async () => {
     try {
       setLoadingOverlay(true);
-      const { data, error } = await CustomGetApi('/admin/getAllEmails');
+      const { data, error } = await CustomGetApi('/admin/getallEmails');
       console.log('dash-data', data);
       //console.log(data, error);
       if (!data) {
@@ -61,8 +61,8 @@ console.log(grievanceYearlyStats);
       } else {
         toast.success('All Stats Fetched Successfully.');
         //console.log(data);
-        const grievanceData = data?.allGrievances;
-        setAllEmails(grievanceData);
+        const grievanceData = data?.allEmails;
+        setallEmails(grievanceData);
         const allEmailsStats = {};
         allEmailsStats.allMails = grievanceData?.length;
         const repliedMails = grievanceData?.filter((item) => item?.['email_status'] === 1).length;
@@ -305,7 +305,7 @@ catch (err) {
 
           {/* Row 2 - Bar Chart */}
           <Grid item xs={12}>
-            <TotalGrievanceBarChart emailData={allEmails} />
+            <TotalEmailBarChart emailData={allEmails} />
           </Grid>
         </Grid>
       </Grid>

@@ -26,16 +26,18 @@ async function saveReply(req, res) {
         return res.status(404).json({ success: false, msg: 'Email not found for given resp_id' });
       }
 
-      const org = await Organization.findOne({ where: { email: req?.user?.email } });
-      if (!org) return res.status(404).json({ success: false, msg: 'User not found' });
-
+      // const org = await Organization.findOne({ where: { email: req?.user?.email } });
+      // if (!org) return res.status(404).json({ success: false, msg: 'User not found' });
+      if (!req.body.org_id) {
+  return res.status(400).json({ success: false, msg: 'Missing org_id' });
+}
       const newReply = await Reply.create({
         reply_id: uuidv4(),
         llm_reply: 'NA',
         final_reply,
         replied_at: new Date(),
         resp_id: email.resp_id,
-        org_id: org.org_id
+        org_id: req.body.org_id
       });
 
       return res.status(201).json({ success: true, msg: 'Reply created successfully', reply_id: newReply.reply_id });

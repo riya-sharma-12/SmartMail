@@ -14,7 +14,7 @@ import SkeletonTotalOrderCard from 'ui-component/cards/Skeleton/EarningCard';
 import CustomChartData from './chart-data/custom-chart-bar';
 
 // assets
-import EarningIcon from 'assets/images/icons/earning.svg';
+// import EarningIcon from 'assets/images/icons/earning.svg';
 //import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 // import { all } from 'axios';
@@ -108,7 +108,7 @@ const [timeValue, setTimeValue] = useState(true); // true = All Mails selected b
               <Grid item>
                 <Grid container justifyContent="space-between">
                   <Grid item>
-                    <Avatar
+                    {/* <Avatar
                       variant="rounded"
                       sx={{
                         ...theme.typography.commonAvatar,
@@ -118,7 +118,7 @@ const [timeValue, setTimeValue] = useState(true); // true = All Mails selected b
                       }}
                     >
                       <img src={EarningIcon} alt="Notification" />
-                    </Avatar>
+                    </Avatar> */}
                   </Grid>
                   <Grid item>
                     <Button
@@ -144,7 +144,7 @@ const [timeValue, setTimeValue] = useState(true); // true = All Mails selected b
               </Grid>
               <Grid item sx={{ mb: 0.75 }}>
                 <Grid container alignItems="center">
-                  <Grid item xs={6}>
+<Grid item xs={6}>
                     <Grid container alignItems="center">
                       <Grid item>
                         {timeValue ? (
@@ -161,7 +161,7 @@ const [timeValue, setTimeValue] = useState(true); // true = All Mails selected b
                         <Avatar
                           sx={{
                             ...theme.typography.smallAvatar,
-                            cursor: 'pointer',
+                            // cursor: 'pointer',
                             backgroundColor: theme.palette.primary[200],
                             color: theme.palette.primary.dark
                           }}

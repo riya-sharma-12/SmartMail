@@ -4,7 +4,7 @@ const { default: ollama } = require('ollama');
 const { response } = require('express');
 const { tr } = require('date-fns/locale');
 const modelName = 'llama3.2:3b';
-const getAllEmails = async (req, res) => {
+const getallEmails = async (req, res) => {
   try {
     const userEmail = req?.user?.email;
     if(!userEmail){ res.status(401).json({ msg: 'User Not Found'});}
@@ -39,13 +39,13 @@ const getAllEmails = async (req, res) => {
       };
     });
 
-    res.status(200).json({ msg: 'Emails fetched successfully!', allGrievances: formatted });
+    res.status(200).json({ msg: 'Emails fetched successfully!', allEmails: formatted });
   } catch (error) {
     console.error('Error fetching emails:', error);
     res.status(500).json({ error: 'Failed to fetch emails.' });
   }
 };
-const getAllEmailsBySubjs = async (req, res) => {
+const getallEmailsBySubjs = async (req, res) => {
   try {
     const userEmail = req?.user?.email; // ✅ token-based email
     if (!userEmail) return res.status(401).json({ msg: 'User Not Found' });
@@ -92,7 +92,7 @@ const getAllEmailsBySubjs = async (req, res) => {
       };
     });
 
-    res.status(200).json({ msg: 'Emails fetched successfully!', allGrievances: formatted });
+    res.status(200).json({ msg: 'Emails fetched successfully!', allEmails: formatted });
   } catch (error) {
     console.error('Error fetching emails:', error);
     res.status(500).json({ error: 'Failed to fetch emails.' });
@@ -116,4 +116,4 @@ const botChat = async (req, res) => {
   }
 }
 
-module.exports = { getAllEmails, getAllEmailsBySubjs, botChat };
+module.exports = { getallEmails, getallEmailsBySubjs, botChat };

@@ -111,7 +111,7 @@ export default function themeTypography(theme) {
       textTransform: 'capitalize'
     },
     commonAvatar: {
-      cursor: 'pointer',
+      // cursor: 'pointer',
       borderRadius: '8px'
     },
     smallAvatar: {
