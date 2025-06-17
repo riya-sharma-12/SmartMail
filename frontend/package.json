@@ -1,11 +1,12 @@
 {
-  "name": "carings",
+  "name": "emails",
   "version": "3.3.2",
   "private": true,
   "dependencies": {
     "@emotion/cache": "^11.9.3",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
+    "@fontsource/inter": "^5.2.6",
     "@mui/icons-material": "^5.8.4",
     "@mui/lab": "^5.0.0-alpha.88",
     "@mui/material": "^5.8.6",
@@ -21,7 +22,7 @@
     "chart.js": "^4.4.9",
     "crypto-js": "^4.2.0",
     "formik": "^2.2.9",
-    "framer-motion": "^6.3.16",
+    "framer-motion": "^6.5.1",
     "material-ui-popup-state": "^4.0.1",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",

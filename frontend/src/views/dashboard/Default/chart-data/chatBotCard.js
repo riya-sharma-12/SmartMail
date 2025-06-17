@@ -209,7 +209,7 @@ const ChatBotCard = () => {
                   : '16px 16px 16px 0'
             }}
           >
-            <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+<Typography variant="body2" color="inherit" sx={{ whiteSpace: 'pre-wrap' }}>
               {msg.text}
             </Typography>
           </Paper>

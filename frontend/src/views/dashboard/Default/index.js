@@ -10,7 +10,7 @@ import TotalIncomeLightCard from './TotalIncomeLightCard';
 import TotalEmailBarChart from './TotalEmailBarChart';
 import { gridSpacing } from 'store/constant';
 import BackDrop from 'views/utilities/BackDrop';
-import ChatBotCard from './chart-data/chatBotCard'; // Adjust path if needed grs_client\src\views\dashboard\Default\chart-data\chatBotCard.js
+import ChatBotCard from './chart-data/chatBotCard'; 
 
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 

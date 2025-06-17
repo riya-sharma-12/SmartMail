@@ -62,7 +62,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
       <SearchSection />
       <Box sx={{ flexGrow: 1, textAlign: 'center' }}>
         <Typography variant="h2" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
-          Smart Email Responder
+          SmartMail.AI
         </Typography>
       </Box>
       {/* notification & profile */}
