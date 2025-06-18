@@ -70,7 +70,7 @@ const Login = () => {
     flexDirection: 'column',
     alignItems: 'center',
     textAlign: 'center' , fontSize: '2.5rem'}}>
-    Welcome to <br /> Smart Mail Responder
+    Welcome to <br /> SmartMail.AI
   </Typography>
 
   {/* Intro Heading */}
@@ -96,7 +96,7 @@ const Login = () => {
               <Typography variant="h3" sx={{ color: '#1976d2', fontWeight: 'bold', flexDirection: 'column',
     alignItems: 'center',
     textAlign: 'center'}}>
-    Smart Mail Responder helps you stay on top of your emails with ease
+    SmartMail.AI helps you stay on top of your emails with ease
               </Typography>
           </Box>
 

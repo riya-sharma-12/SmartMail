@@ -14,12 +14,13 @@ const TotalEmailBarChart = ({ emailData }) => {
     'spam': 0
   };
 
-  emailData.forEach(email => {
-    const category = email['email-category'];
-    if (categoryCounts.hasOwnProperty(category)) {
-      categoryCounts[category]++;
-    }
-  });
+ emailData.forEach(email => {
+  const category = email['email-category'];
+  if (Object.prototype.hasOwnProperty.call(categoryCounts, category)) {
+    categoryCounts[category]++;
+  }
+});
+
 
   const labels = Object.keys(categoryCounts).map(label =>
     label.replace('-', ' ').replace(/\b\w/g, c => c.toUpperCase())

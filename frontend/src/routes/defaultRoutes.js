@@ -25,6 +25,10 @@ const defaultRoutes = {
      {
       path: '/verify-signup',
       element: <VerifySignup />
+    },
+     {
+      path: '*',
+      element: <PageNotFoundPage />
     }
   ]
 };

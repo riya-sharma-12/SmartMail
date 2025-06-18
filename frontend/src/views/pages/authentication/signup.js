@@ -84,7 +84,7 @@ const Signup = () => {
               fontSize: '2.5rem',
             }}
           >
-            Join Smart Mail Responder
+            Join SmartMail.AI
           </Typography>
 
           <Box

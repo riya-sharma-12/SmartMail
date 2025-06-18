@@ -163,7 +163,10 @@ const ChatBotCard = () => {
   };
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+messagesEndRef.current?.scrollIntoView({
+  behavior: 'smooth',
+  block: 'nearest' // prevent page-level scroll
+});
   }, [messages]);
 
   return (

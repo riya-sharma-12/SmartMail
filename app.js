@@ -20,7 +20,7 @@ app.use('/api/auth', authRoutes);
 
 app.listen(5000, async () => {
   console.log('Server running on http://localhost:5000 --');
-  await fetchAllMails();
+  // await fetchAllMails();
   // processReplies();
 });
 
